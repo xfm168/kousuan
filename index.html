@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>口算闯关营</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%;
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #eef4ff;
+  color: #1f2a44;
+  overscroll-behavior: none;
+}
+button { font-family: inherit; border: none; cursor: pointer; }
+
+.screen { height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
+
+/* ===== 首页 ===== */
+.home-wrap {
+  height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; text-align: center; gap: 14px;
+  background: linear-gradient(180deg,#dbeafe,#eef4ff 60%);
+}
+.home-title { font-size: 34px; font-weight: 800; color: #2451c4; }
+.home-sub { font-size: 15px; color: #5a6b8c; margin-bottom: 20px; }
+.home-note { font-size: 12px; color: #8b98b3; margin-top: 10px; }
+
+.btn-primary {
+  background: linear-gradient(135deg,#4f7dfb,#2451c4);
+  颜色：#fff；字体大小: 17PX; 字体粗细: 700;
+  填充: 16PX 28PX; 边界半径: 16PX; 箱形阴影: 0 6PX 16PX RGBA(36,81,196,.3);
+}
+.btn-初级.大的 { 宽度: 100%; 最大宽度: 340PX; }
+.btn-二级 {
+  背景：#fff；颜色：#2451c4；边境: 1.5PX 固体#cfdcff；
+  字体大小: 15PX; 字体粗细: 600; 填充: 12PX 20PX; 边界半径: 14PX; 弯曲: 1;
+}
+
+/* ===== 顶栏（通用） ===== */
+.顶栏 {
+  高度: 56PX; 显示: 弯曲; 对齐项目: 中心; justify-content: 间距;
+  填充: env(安全区内置顶,0) 14PX 0 14PX;
+  顶部衬垫: 最大值(10PX, env(安全区内置顶));
+  背景：#fff；下边框: 1PX 固体#e6ecf9；挠曲收缩: 0;
+}
+.back-btn { 背景: 没有一个; 字体大小: 15PX; 颜色：#2451c4；字体粗细: 600; }
+.顶栏标题 { 字体大小: 15PX; 字体粗细: 700; 颜色：#1f2a44；}
+
+/* ===== 地图页 ===== */
+.地图滚动 { 高度: calc(100% - 56PX); 溢流y: 自动; 填充: 16PX; }
+.level-node {
+  显示: 弯曲; 对齐项目: 中心; 差距: 12PX; 背景：#fff；边界半径: 14PX;
+  padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(36,81,196,.06);
+}
+.level-node.locked { opacity: .5; }
+.level-node.current { border: 2px solid #4f7dfb; }
+.level-badge { width: 40px; height: 40px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; }
+.level-badge.done { background: #ffb300; }
+.level-badge.current { background: #4f7dfb; }
+.level-badge.locked { background: #b7c2da; }
+.level-info-name { font-size: 15px; font-weight: 700; }
+.level-info-sub { font-size: 12px; color: #8b98b3; margin-top: 2px; }
+
+/* ===== 答题页：固定五区域 ===== */
+.answer-page {
+  height: 100%; display: flex; flex-direction: column;
+}
+.answer-topbar { height: auto; min-height: 56px; padding-bottom: 8px; flex-direction: column; align-items: stretch; gap: 4px; }
+.answer-topbar > .back-btn { align-self: flex-start; }
+.topbar-mid { display: flex; justify-content: space-between; align-items: center; }
+.topbar-stats { display:flex; gap: 10px; font-size: 13px; font-weight: 700; }
+.dot-green { color: #16a34a; }
+.dot-red { color: #dc2626; }
+.timer { position: absolute; right: 14px; top: max(10px, env(safe-area-inset-top)); font-size: 13px; font-weight: 700; color: #2451c4; background:#eef4ff; padding:4px 10px; border-radius:10px; }
+
+.question-area {
+  flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center;
+  padding: 6px 16px; position: relative;
+}
+.question-card {
+  width: 100%; max-width: 420px; background: #fff; border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(36,81,196,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(28px, 8vw, 48px); font-weight: 800; letter-spacing: 2px;
+  padding: clamp(10px, 4vh, 28px) 10px; text-align: center;
+}
+.question-card.correct { background: #e8fbe9; }
+.question-card.wrong { background: #fdecec; }
+
+.speak-btn {
+  flex-shrink: 0; margin: 0 auto 4px; display: block; background: #eef4ff; color: #2451c4;
+  字体大小: 13PX; 字体粗细: 600; 填充: 6PX 16PX; 边界半径: 20PX;
+}
+
+.answer-display {
+  flex-shrink: 0; margin: 0 16px 6px; min-height: 36px; background: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700;
+  border: 1.5px solid #e6ecf9;
+}
+
+.keypad {
+  flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 6px; padding: 6px 12px max(8px, env(safe-area-inset-bottom));
+}
+.keypad button {
+  height: clamp(38px, 6.5vh, 52px); border-radius: 12px; background: #fff; font-size: 19px; font-weight: 700;
+  box-shadow: 0 2px 6px rgba(36,81,196,.08);
+}
+.keypad .key-func { background: #fff1f1; color: #dc2626; font-size: 15px; }
+.keypad .key-confirm { grid-column: span 3; background: linear-gradient(135deg,#4f7dfb,#2451c4); color: #fff; font-size: 18px; }
+
+/* 连击称号浮层 */
+.combo-badge {
+  position: absolute; left: 50%; top: 20%; transform: translate(-50%,0) scale(.6);
+  display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 999px;
+  font-weight: 800; color: #fff; font-size: 18px; opacity: 0; pointer-events: none;
+  animation: badgePop 1.4s ease forwards;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+}
+@keyframes badgePop {
+  0% { opacity: 0; transform: translate(-50%,10px) scale(.5); }
+  15% { opacity: 1; transform: translate(-50%,0) scale(1.1); }
+  25% { transform: translate(-50%,0) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%,-10px) scale(.9); }
+}
+.badge-lv1 { background: linear-gradient(135deg,#ff9966,#ff5e3a); }
+.badge-lv2 { background: linear-gradient(135deg,#ffd166,#ff9f1c); box-shadow: 0 0 24px rgba(255,159,28,.5); }
+.badge-lv3 { background: linear-gradient(135deg,#9d6bff,#5b3df0); }
+.badge-lv3::after { content:''; }
+.badge-lv4 { background: linear-gradient(135deg,#ffd700,#2451c4); box-shadow: 0 0 30px rgba(255,215,0,.6); }
+.badge-lv5 { background: linear-gradient(135deg,#ff3d81,#ffb300); box-shadow: 0 0 40px rgba(255,61,129,.7); }
+
+/* ===== 结算页 ===== */
+.settlement-wrap {
+  height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
+  padding: 40px 20px max(20px, env(safe-area-inset-bottom)); text-align: center; gap: 14px;
+}
+.settle-emoji { font-size: 60px; }
+.settle-title { font-size: 26px; font-weight: 800; color: #16a34a; }
+.settle-title.fail { color: #dc2626; }
+.settle-stats { display: flex; gap: 12px; width: 100%; max-width: 380px; margin: 10px 0; }
+.stat-box { flex: 1; border-radius: 16px; padding: 16px 8px; }
+.stat-green { background: #e8fbe9; }
+.stat-blue { background: #eaf1ff; }
+.stat-num { font-size: 26px; font-weight: 800; }
+.stat-green .stat-num { color: #16a34a; }
+.stat-blue .stat-num { color: #2451c4; }
+.stat-label { font-size: 12px; color: #8b98b3; margin-top: 4px; }
+
+.settle-titles-label { font-size: 14px; color: #8b98b3; margin-top: 4px; }
+.settle-titles { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: 400px; }
+.settle-titles .pill {
+  display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px;
+  color: #fff; font-weight: 700; font-size: 14px;
+}
+
+.settle-secondary { display: flex; gap: 10px; width: 100%; max-width: 340px; margin-top: 4px; }
+
+</style>
+</head>
+<body>
+
+<!-- 首页 -->
+<div id="screen-home" class="screen">
+  <div class="home-wrap">
+    <h1 class="home-title">口算闯关营</h1>
+    <p class="home-sub">每天练一点，口算更厉害！</p>
+    <button class="btn-primary big" onclick="goToMap()">🌱 学前班 · 开始闯关</button>
+    <p class="home-note">（当前核心版本已实现学前班12关，其余年级陆续接入）</p>
+  </div>
+</div>
+
+<!-- 地图页 -->
+<div id="screen-map" class="screen" style="display:none;">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">← 返回</button>
+    <div class="topbar-title">学前班 · 数字王国</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="map-scroll" id="map-list"></div>
+</div>
+
+<!-- 答题页：固定视口五区域布局 -->
+<div id="screen-answer" class="screen" style="display:none;">
+  <div class="answer-page">
+    <div class="topbar answer-topbar">
+      <button class="back-btn" onclick="confirmExit()">← 返回</button>
+      <div class="topbar-mid">
+        <div class="topbar-title" id="level-title">学前班·第1关</div>
+        <div class="topbar-stats">
+          <span id="qindex">第1/20题</span>
+          <span class="dot-green" id="correct-count">🟢0</span>
+          <span class="dot-red" id="wrong-count">🔴0</span>
+        </div>
+      </div>
+      <div class="timer" id="timer">10:00</div>
+    </div>
+
+    <div class="question-area" id="question-area">
+      <div class="question-card" id="question-card"></div>
+      <div id="combo-badge-layer"></div>
+    </div>
+
+    <button class="speak-btn" id="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button>
+
+    <div class="answer-display" id="answer-display"></div>
+
+    <div class="keypad" id="keypad">
+      <button onclick="keypadInput('1')">1</button>
+      <button onclick="keypadInput('2')">2</button>
+      <button onclick="keypadInput('3')">3</button>
+      <button onclick="keypadInput('4')">4</button>
+      <button onclick="keypadInput('5')">5</button>
+      <button onclick="keypadInput('6')">6</button>
+      <button onclick="keypadInput('7')">7</button>
+      <button onclick="keypadInput('8')">8</button>
+      <button onclick="keypadInput('9')">9</button>
+      <button class="key-func" onclick="keypadClear()">清除</button>
+      <button onclick="keypadInput('0')">0</button>
+      <button class="key-func" onclick="keypadDelete()">删除</button>
+      <button class="key-confirm" onclick="keypadConfirm()">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 结算页 -->
+<div id="screen-settlement" class="screen" style="display:none;">
+  <div class="settlement-wrap">
+    <div class="settle-emoji" id="settle-emoji">🎉</div>
+    <div class="settle-title" id="settle-title">闯关成功！</div>
+    <div class="settle-stats">
+      <div class="stat-box stat-green">
+        <div class="stat-num" id="stat-correct">20/20</div>
+        <div class="stat-label">首轮正确</div>
+      </div>
+      <div class="stat-box stat-blue">
+        <div class="stat-num" id="stat-time">00:00</div>
+        <div class="stat-label">用时</div>
+      </div>
+    </div>
+    <div class="settle-titles-label">🎖 本关评级</div>
+    <div class="settle-titles" id="settle-titles"></div>
+    <button class="btn-primary big" id="btn-next-level" onclick="challengeNext()">挑战下一关</button>
+    <div class="settle-secondary">
+      <button class="btn-secondary" onclick="goToMap()">返回地图</button>
+      <button class="btn-secondary" onclick="retryLevel()">再玩一次</button>
+    </div>
+  </div>
+</div>
+
+<!-- 失败页 -->
+<div id="screen-failed" class="screen" style="display:none;">
+  <div class="settlement-wrap">
+    <div class="settle-emoji">😅</div>
+    <div class="settle-title fail">挑战失败，再来一次吧！</div>
+    <button class="btn-primary big" onclick="retryLevel()">重新挑战</button>
+    <div class="settle-secondary">
+      <button class="btn-secondary" onclick="goToMap()">返回地图</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function numText(n) { return String(n); }
+
+function makeQ(a, op, b, answer) {
+  const expr = `${a} ${op} ${b} = ?`;
+  const opWord = op === '+' ? '加' : '减';
+  const speechText = `${numText(a)}${opWord}${numText(b)}等于多少`;
+  return { id: `${a}${op}${b}`, expression: expr, a, b, op, answer, speechText, type: 'arith' };
+}
+
+function genAddPool(max, opts = {}) {
+  const { noCarry = false, minSum = 0 } = opts;
+  const pool = [];
+  for (let a = 0; a <= max; a++) {
+    for (let b = 0; b <= max; b++) {
+      const sum = a + b;
+      if (sum > max) continue;
+      if (sum < minSum) continue;
+      if (noCarry && (a % 10 + b % 10) >= 10) continue;
+      if (a === 0 && b === 0) continue;
+      pool.push(makeQ(a, '+', b, sum));
+    }
+  }
+  return pool;
+}
+
+function genSubPool(max, opts = {}) {
+  const { noBorrow = null, minA = 0 } = opts;
+  const pool = [];
+  for (let a = minA; a <= max; a++) {
+    for (let b = 0; b <= a; b++) {
+      const diff = a - b;
+      if (noBorrow === true && (a % 10) < (b % 10)) continue;
+      if (noBorrow === false && (a % 10) >= (b % 10)) continue;
+      if (a === 0 && b === 0) continue;
+      pool.push(makeQ(a, '-', b, diff));
+    }
+  }
+  return pool;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pick(pool, n) { return shuffle(pool).slice(0, Math.min(n, pool.length)); }
+
+const LEVEL_POOLS = {
+  1: () => genAddPool(10),
+  2: () => genSubPool(10),
+  3: () => shuffle([...genAddPool(10), ...genSubPool(10)]),
+  4: () => genAddPool(20, { noCarry: true, minSum: 11 }),
+  5: () => genSubPool(20, { noBorrow: true, minA: 11 }),
+  6: () => shuffle([
+              ...genAddPool(20, { minSum: 11 }).filter(q => (q.a % 10 + q.b % 10) >= 10),
+              ...genSubPool(20, { noBorrow: false, minA: 11 })
+            ]),
+  7: () => shuffle([
+              ...genAddPool(20, { minSum: 11 }),
+              ...genSubPool(20, { minA: 11 })
+            ]),
+  8: ()=>genAddPool(30, { minSum: 21 }),
+  9: ()=>genSubPool(30, { 米纳: 21 }),
+  10: () => genAddPool(50, { minSum: 31 }),
+  11: ()=>genSubPool(50, { 米纳: 31 }),
+  12: ()=>洗牌([
+              ...genAddPool(50, { minSum: 31 }),
+              ...genSubPool(50, { 米纳: 31 })
+            ]),
+};
+
+Const level_NAMES={
+  1: '10以内加法', 2: '10以内减法', 3: '10以内加减综合',
+  4: '20以内加法', 5: '20以内减法', 6: '20以内进退位',
+  7: '20以内综合挑战', 8: '30以内加法', 9: '30以内减法',
+  10: '50以内加法', 11: '50以内减法', 12: '50以内终极挑战'
+};
+
+功能getLevelQuestions(levelNum) {
+  Const池=level_POOLS[levelNum]();
+  返回挑选(池, 20);
+}
+
+窗户.KOUSUAN_DATA={ getLevelQuestions, level_NAMES, total_LEVELS: 12 };
+
+班级SpeechQueue{
+  构造函数() {
+    这.队列=[];
+    这.说话=假的;
+    这.currentUtteranceId=0;
+    这.已启用=正确;
+  }
+  stopAll() {
+    如果 ('speechSynthesis' 在……内 窗户) {
+      尝试 { 窗户.speechoSynthesis.取消(); } 赶上 (e) {}
+    }
+    这.队列=[];
+    这.说话=假的;
+    这.currentUtteranceId++;
+  }
+  入队(文本, { 比率=1, 球场=1, onend=无效的 }={}) {
+    const id = this.currentUtteranceId;
+    this.queue.push({ text, rate, pitch, onEnd, id });
+    this._processNext();
+  }
+  speakImmediate(text, { rate = 1, pitch = 1, onEnd = null } = {}) {
+    this.stopAll();
+    this.enqueue(text, { rate, pitch, onEnd });
+  }
+  _processNext() {
+    如果 (这.说话) 返回;
+    const item = this.queue.shift();
+    if (!item) return;
+    this.speaking = true;
+    const myId = item.id;
+    if (!('speechSynthesis' in window)) {
+      this.speaking = false;
+      if (item.onEnd) item.onEnd();
+      这._processNext();
+      返回;
+    }
+    让完全的;
+    尝试{
+      完全的=新的SpeechSynthesisUtterance(项.文本);
+      完全的.朗=‘Zh-CN’;
+      完全的.比率=项.比率;
+      完全的.球场=项.球场;
+    } 赶上 (e) {
+      这.说话=假的;
+      如果 (项.onend) 项.onend();
+      这._processNext();
+      返回;
+    }
+    Const完成=()=>{
+      如果 (MyID!==这.currentUtteranceId) 返回;
+      这.说话=假的;
+      如果 (项.onend) 项.onend();
+      这._processNext();
+    };
+    完全的.onend=完成;
+    完全的.onError=完成;
+    尝试{ 窗户.speechoSynthesis.说话(完全的); } 赶上 (e) { 完成(); }
+  }
+}
+窗户.speechQueue=新的SpeechQueue();
+
+Const鼓励文字(_W)=['太厉害了', '游刃有余', '无人能挡', '横扫千军', '神机妙算', '百战百胜'];
+功能randomEncourage() { 返回鼓励文字(_W)[数学.地板(数学.随机() * 鼓励文字(_W).长度)]; }
+
+Constcombo_TITLES=[
+  { 阈值: 18, 姓名: 'MVP连胜王', 图标: '👑', CLS: 'badge-lv5', 比率: 1.3, 球场: 1.4 },
+  { 阈值: 15, 姓名: '收割战神', 图标: '🏆', CLS: 'badge-lv4', 比率: 1.25, 球场: 1.3 },
+  { 阈值: 10, 姓名: '常胜将军', 图标: '💎', CLS: 'badge-lv3', 比率: 1.15, 球场: 1.2 },
+  { 阈值: 5,  姓名: '五连绝世', 图标: '⚡', CLS: 'badge-lv2', 比率: 1.1,  球场: 1.1 },
+  { 阈值: 3,  姓名: '三连决胜', 图标: '🔥', CLS: 'badge-lv1', 比率: 1.0,  球场: 1.0 },
+];
+
+功能checkComboTitle(条纹, nannouncatedMaxThreshold) {
+  为 (Constt...的combo_TITLES) {
+    如果 (条纹>=t.阈值 && t.阈值>nannouncatedMaxThreshold) 返回t;
+  }
+  返回无效的;
+}
+
+功能computeSettlementTitles({ firstRoundCorrect, firstRoundWrong, avgSeconds, maxComboReached }) {
+  Const全部的=firstRoundCorrect+firstRoundWrong;
+  Const精度=全部的>0 ? firstRoundCorrect / 全部的 : 0;
+  Const标准=[];
+  ConstisPerfect=firstRoundWrong===0;
+  ConstisUltimate=maxComboReached>=10 && isPerfect && avgSeconds<15;
+如果(如果  {如果 (isUltimate) {
+标准.推({姓名：'绝世无双王者'，图标：'👑'，CLS：'badge-lv5'，描述：'速度、准确率、连答全部拉满，获得终极绝世无双王者'})；标准.推({ 姓名: '绝世无双王者', 图标: '👑', CLS: 'badge-lv5', DESC: '速度、准确率、连答全部拉满，获得终极绝世无双王者' });
+} 其他{} 其他{
+如果(isPerfect)标准.推({姓名：'最强王者'，图标：'⭐'，CLS：'badge-lv4'，描述：'整关零失误完美通关，获得最强王者'})；如果 (isPerfect) 标准.推({ 姓名: '最强王者', 图标: '⭐', CLS: 'badge-lv4', DESC: '整关零失误完美通关，获得最强王者' });
+其他如果(精度>=0.85)标准.推({姓名：'暴击王者'，图标：'💥'，CLS：'badge-lv3'，描述：'计算稳定性拉满，获得暴击王者'})；其他如果 (精度>=0.85) 标准.推({ 姓名: '暴击王者', 图标: '💥', CLS: 'badge-lv3', DESC: '计算稳定性拉满，获得暴击王者' });
+如果(avgSeconds<30)标准.推({姓名：'闪电王者'，图标：'⚡'，CLS：'badge-lv3'，描述：'看题秒出答案，获得闪电王者'})；如果 (avgSeconds<30) 标准.推({ 姓名: '闪电王者', 图标: '⚡', CLS: 'badge-lv3', DESC: '看题秒出答案，获得闪电王者' });
+其他如果(avgSeconds<40)标准.推({姓名：'疾行王者'，图标：'💨'，CLS：'badge-lv2'，描述：'答题速度远超标准，获得疾行王者'})；其他如果 (avgSeconds<40) 标准.推({ 姓名: '疾行王者', 图标: '💨', CLS: 'badge-lv2', DESC: '答题速度远超标准，获得疾行王者' });
+  }
+返回标准;
+}
+窗户.KOUSUAN_TITLES={randomEnco鼓励，combo_TITLES，checkComboTitle，computeSettlementTitles}；
+
+Consttotal_QUESTIONS=20；
+Consttime_LIMIT_SEC=600；
+让状态=无效的;
+让timerHandle=无效的；
+
+功能loadProgress(){
+尝试{返回JSON.解析(localStorage.getitem('kousuan_progress')||'{}')；}赶上(e){返回{}；}
+}
+功能saveProgress(p){localStorage.setitem('kousuan_progress'，JSON。使字符串序列化(p))；}
+功能getUnlockedLevel(){Constp=loadProgress()；返回p.maxUnlocked||1；}
+功能unlockNext(levelNum){
+Constp=loadProgress()；
+p.maxUnlocked=数学.最大值(p.maxUnlocked||1，levelNum+1)；
+！doctype超文本标记语言>saveProgress(p)；
+}
+
+功能showScreen(身份标识){
+文件.querySelectorAll('.screen').foreach(埃尔=>埃尔.风格.显示='无')；
+文件.getElementById(身份标识).风格.显示='块'；
+}
+功能Gohome(){窗户.speechQueue.stopAll()；showScreen('屏幕主页')；}
+函数renderMap()){窗户(){函数goToMap；.speechQueue.stopAll()；renderMap()；showScreen('屏幕映射')；}goToMap(){窗户.speechQueue.stopAll()；renderMap()；showScreen('屏幕映射')；}){窗户.speechQueue.stopAll()；renderMap()；showScreen('屏幕映射')；}goToMap(){窗户.speechQueue.stopAll()；renderMap()；showScreen('屏幕映射')；}
+
+功能(){renderMap(){
+常数已解锁=getUnlockedLevel()；常数已解锁=getUnlockedLevel()；已解锁=getUnlockedLevel()；常数已解锁=getUnlockedLevel()；
+Constp=loadProgress()；常数p=loadProgress()；常数p=loadProgress()；
+Const已完成=p.completedLevels||[]；常数已完成=p.completedLevels||[]；完成=p.completedLevels||[]；常数已完成=p.completedLevels||[]；
+常量列表=文件.getElementById('map-list')；常量列表=文件.getElementById('map-list')；=文件.getElementById('map-list')；常数列表=文件.getElementById('map-list')；
+列表.innerHTML="；list.innerHTML="；.innerHTML=为(让i=1；i<=窗户.KOUSUAN_DATA.total_LEVELS；i++){为(让i=1；i<=窗户.KOUSUAN_DATA.total_LEVELS；i++){
+为(让i=1；i<=窗户.KOUSUAN_DATA.total_LEVELS；i++){为(让我=1；我<=窗户.KOUSUAN_DATA.total_LEVELS；我++){(让i=1；i<=窗户.KOUSUAN_DATA.total_LEVELS；i++){为(让我=1；我<=窗户.KOUSUAN_DATA.total_LEVELS；我++){
+ConstisDone=已完成.包括(我)；常数isDone=已完成.包括(我)；isDone=搞定了。包括(我)；常数isDone=已完成.包括(我)；=已完成.包括(我)；常数isDone=已完成.包括(我)；isDone=搞定了。包括(我)；常数isDone=已完成.包括(我)；
+常数isLocked=我>已解锁；常量isLocked=我>解锁；=我>已解锁；常量isLocked=我>已解锁；=我>已解锁；常量isLocked=我>解锁；=我>已解锁；常量isLocked=我>已解锁；
+常数isCurrent=我===已解锁&&！isDone；常量isCurrent=我===已解锁&&！isDone；=我===已解锁&&！isDone；constisCurrent=我===已解锁&&！isDone；=我===已解锁&&！isDone；常量isCurrent=我===已解锁&&！isDone；=我===已解锁&&！isDone；constisCurrent=我===已解锁&&！isDone；
+Constdiv=文件.createElement('div')；常数div=文件.createElement('div')；div=文件.createElement('div')；常数div=文件.createElement('div')；=文件.createElement('div')；常数div=文件.createElement('div')；div=文件.createElement('div')；常数div=文件.createElement('div')；
+div.className='level-node'+(是否已锁定？'已锁定'：isCurrent？'当前'：")；div.className='level-node'+(isLocked？'locked'：isCurrent？“当前”："")；.className='level-node'+div.innerHTML='div.innerHTML=<div班级="className'完成'：isLocked？'已锁定'：'当前'}">是否已锁定？'锁定'：isCurrent？'当前'：")；div.className='level-node'+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；.className='level-node'+(是否已锁定？'已锁定'：isCurrent？'当前'：")；div.className='level-node'+(isLocked？'locked'：isCurrent？“当前”："")；.className='level-node'+div.innerHTML='div.innerHTML=<div班级="水平-徽章${isDone？'完成'：isLocked？'已锁定'：'当前'}">是否已锁定？'锁定'：isCurrent？'当前'：")；div.className='level-node'+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；className='level-node'+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；+(是否已锁定？'已锁定'：isCurrent？'当前'：”)；
+div.innerHTML='div.innerHTML=<div class="level-badge${isDone？'已完成'：isLocked？'锁定'：'当前'}">.innerHTML='div.innerHTML=<div班级="级别徽章${isDone？'已完成'：isLocked？'锁定'：'当前'}">
+<div班级="级别徽标${isDone？'Done'：isLocked？'Locked'：${isDone？'⭐'：是否已锁定？'🔒'：i}}">div班级="级别徽章${isDone？'完成'：是否已锁定？“已锁定”：${isDone？'⭐'：是否已锁定？'🔒'：i}}">div班级="级别徽章${isDone？'Done'：isLocked？'Locked'：${isDone？'⭐'：是否已锁定？'🔒'：i}}">div班级="级别徽章${isDone？'完成'：是否已锁定？“已锁定”：${isDone？'⭐'：是否已锁定？'🔒'：i}}">
+${isDone？'⭐'：是否已锁定？'🔒'：</div><div class="level-info-name">第${i}关·${window.KOUSUAN_DATA.level_NAMES[i]}</div>${isDone？'⭐'：是否已锁定？'🔒'：</div><div class="level-info-name">第${i}关·${window.KOUSUAN_DATA.level_NAMES[i]}</div>{isDone？'⭐'：是否已锁定？'🔒'：</div><div class="level-info-name">第${i}关·${window.KOUSUAN_DATA.level_NAMES[i]}</div>${isDone？'⭐'：是否已锁定？'🔒'：</div><div class="level-info-name">第${i}关·${window.KOUSUAN_DATA.level_NAMES[i]}</div>
+</div>/div>/div>/div>
+<div>div>div>div>
+<div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>'当前可挑战'}</div>[i]}</div></div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>'当前可挑战'}</div>[i]}</div>}</div>[i]}</div>：'当前可挑战'}</div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>'当前可挑战'}</div>[i]}</div></div>[i]}</div>div班级="level-info-name">第${我}关·${窗户.KOUSUAN_DATA.<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：'当前可挑战'}</div>[i]}</div>'当前可挑战'}</div>[i]}</div>
+<div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>div班级="level-info-sub">${isDone？'已通关，可重玩'：isLocked？'完成前一关解锁'：</div>'；}</div>
+</div>'；/div>'；/div>'；/div>startTimer/div>'；/div>'；/div>'；/div>startTimer
+文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关‘；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent=列表。appendChild(div)；列表.appendChild(div)；列表.appendChild(div)；列表.appendChild(div)；
+列表。appendChild(div)；列表.appendChild(div)；列表.appendChild(div)；列表.appendChild(div)；
+  }
+}
+
+功能startLevel(levelNumstartTimerstartLevel{(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){(levelNumstartTimerstartLevel{(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){startLevel(levelNum){
+窗户。；窗口；stophone()；.speechQueue.stopAll()；窗口；语音队列.stopAll()；()；.speechQueue.stopAll()；窗口；语音队列.stopAll()；
+常量问题=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；常量问题=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；常量问题=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；常量问题=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；常量问题=窗户。KOUSUAN_DATA.getLevelQuestions(levelNum)；
+状态={状态={={状态={={状态={={状态={
+levelNum，问题，阶段：'第一'，索引：0，levelNum，问题，阶段：'第一'，索引：0，'第一'，索引：0，levelNum，问题，阶段：'第一'，索引：0，'第一'，索引：0，levelNum，问题，阶段：'第一'，索引：0，'第一'，索引：0，levelNum，问题，阶段：'第一'，索引：0，
+correctCount：0，errorCount:0，errorQueue：[]，retryIndex:0，retryFailed:false，correctCount：0，错误计数：0，错误队列：[]，retryIndex:0，retryFailed:false，：0，errorCount:0，errorQueue：[]，retryIndex:0，retryFailed:false，correctCount：0，errorCount：0，errorQueue：[]，retryIndex:0，retryFailed:false，0，errorQueue：[]，retryIndex:0，retryFailed:false，correctCount：0，错误计数：0，错误队列：[]，retryIndex:0，retryFailed:false，：0，errorCount:0，errorQueue：[]，retryIndex:0，retryFailed:false，correctCount：0，errorCount：0，errorQueue：[]，retryIndex:0，retryFailed:false，
+comboStreak:0，宣告的最大阈值：0，overallBestThreshold:0，maxComboReached:0，comboStreak:0，宣告的MaxThreshold:0，overallBestThreshold:0，maxComboReached:0，：0，宣告的最大阈值：0，overallBestThreshold:0，maxComboReached:0，comboStreak:0，宣布的最大阈值：0，总体最佳阈值：0，最大ComboReached:0，：0，宣告的最大阈值：0，overallBestThreshold:0，maxComboReached:0，comboStreak:0，宣告的MaxThreshold:0，overallBestThreshold:0，maxComboReached:0，：0，宣告的最大阈值：0，overallBestThreshold:0，maxComboReached:0，comboStreak:0，宣布的最大阈值：0，总体最佳阈值：0，最大ComboReached:0，
+currentInput：“”，startTime：日期。现在()，问题starttime：日期.现在()，问题开始时间：日期.现在()，：日期.现在()，问题starttime：日期.现在()，currentInput：""，startTime：日期.现在()，问题starttime：日期.现在()，()，问题starttime：日期.现在()，问题开始时间：日期.现在()，：日期.现在()，问题starttime：日期.现在()，currentInput：""，startTime：日期.现在()，问题starttime：日期.现在()，
+questionTimes：[]，remainSec:time_LIMIT_SEC，questionTimes：[]，remainSec:time_LIMIT_SEC，[]，remainingSec:time_LIMIT_SEC，questionTimes：[]，remainingSec:time_LIMIT_SEC，[]，remainSec:time_LIMIT_SEC，questionTimes：[]，remainSec:time_LIMIT_SEC，[]，remainingSec:time_LIMIT_SEC，questionTimes：[]，remainingSec:time_LIMIT_SEC，
+};
+文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关‘；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent='学前班·第${levelNum}关'；('级别标题').textContent='学前班·第${levelNum}关'；文件。getElementById('级别标题').textContent=showScreen('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；
+showScreen('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；('屏幕答案')；showScreen('屏幕答案')；
+startTimer()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；；()；startTimer()；()；startTimer()；()；startTimer()；()；startTimer()；
+renderQuestion()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；)()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；()；renderQuestion()；)()；renderQuestion()；()；renderQuestion()；
+}
+
+函数startTimer(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){{(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){{(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){(){startTimer(){
+功能startLevel
