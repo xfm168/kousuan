@@ -1,39 +1,39 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<title>口算闯关营</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:#eef4ff; color:#1f2a44; overscroll-behavior:none; }
-button { font-family: inherit; border: none; cursor: pointer; }
-.screen { height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
+html<<！doctype超文本标记语言>>
+<html lang="zh-CN">html lang="zh-CN">
+<head>head>
+<meta charset="UTF-8">meta charset="UTF-8">
+<meta name="viewport"content="width=设备宽度，初始比例=1.0，viewport-fit=覆盖，最大比例=1.0，user-scalable=no">meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>口算闯关营</title>title>口算闯关营</title>
+<style>风格>
+*{箱体尺寸:边框框；边距：0；填充：0；-webkit-tap-highlight-color：透明；}{ 箱体尺寸: 边框框; 边缘: 0; 填充: 0; -webkit-tap-highlight-color: 透明的; }
+HTML，正文{高度:100%；font-family：-apple-system，"平方SC"，"Microsoft Yahei"，无衬线；背景：#eef4ff；颜色：#1f2a44；超卷行为：无；}, 身体 { 高度: 100%; 字体系列: -apple-系统,"平方SC","Microsoft Yahei",无衬线; 背景：#eef4ff；颜色：#1f2a44；过卷行为:没有一个; }
+按钮{字体系列:继承；边框：没有一个；光标：指针；} { 字体系列: 继承; 边境: 没有一个; 光标: 指针; }
+.屏幕{高度：100vh；高度：100dvh；宽容度：100%；溢出：隐藏；}屏幕 { 高度: 100VH; 高度: 100DVH; 宽度: 100%; 溢出: 隐藏的; }
 
 /* ===== 首页 ===== */
-.home-wrap { height:100%; display:flex; flex-direction:column; padding:20px 16px; background:linear-gradient(180deg,#dbeafe,#eef4ff 40%); overflow-y:auto; }
-.home-title { font-size:28px; font-weight:800; color:#2451c4; text-align:center; margin-top:6px; }
-.home-sub { font-size:13px; color:#5a6b8c; text-align:center; margin:4px 0 6px; }
-.streak-display { text-align:center; font-size:13px; color:#ff7a00; font-weight:700; min-height:18px; margin-bottom:8px; }
-.stage-list { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
-.stage-card { background:#fff; border-radius:16px; padding:14px 6px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); }
-.stage-card.soon { opacity:.45; }
-.stage-icon { font-size:28px; }
-.stage-name { font-size:14px; font-weight:700; margin-top:4px; }
-.stage-sub { font-size:10px; color:#8b98b3; margin-top:2px; }
+.家庭包装{高度：100%；显示：flex；flex方向：柱；填充：20px16px；背景：线性梯度(180度，#Dbeafe，#eef4ff40%)；溢流y：自动；}家庭包装 { 高度:100%; 显示:弯曲; 挠曲方向:柱; 填充:20PX 16PX; 背景:线性梯度(180deg，#dbeafe，#eef4ff40%); 溢流y:自动; }
+.首页{字体大小:28PX；字体-重量:800；颜色：#2451c4；文字对齐：居中；上边距：6px；}首页 { 字体大小:28PX; 字体粗细:800; 颜色：#2451c4；文本对齐:中心; 上边距:6PX; }
+.home-sub{字体大小:13PX；颜色：#5a6b8c；文本对齐：居中；页边距：4px06px；}home-sub { 字体大小:13PX; 颜色：#5a6b8c；文本对齐:中心; 边缘:4PX 0 6PX; }
+.条纹显示{文本对齐：居中；字体大小：13px；颜色：#ff7a00；字体粗细：700；最小高度：18px；下边距：8px；}条纹显示 { 文本对齐:中心; 字体大小:13PX; 颜色：#ff7a00；字体粗细:700; 最小高度:18PX; 底边距:8PX; }
+.阶段列表{显示：网格；网格模板列：重复(3，1Fr)；间距：10px；}阶段列表 { 显示:网格; 网格模板列: 重复(3,1Fr); 差距:10PX; }
+.阶段卡片{背景：#FFF；边框半径：16px；填充：14px6px；文本对齐：居中；框阴影：04px12px RGBA(36,81,196,.08);}阶段卡片 { 背景：#fff；边界半径:16PX; 填充:14PX 6PX; 文本对齐:中心; 箱形阴影:0 4PX 12PX RGBA(36,81,196,.08); }
+.阶段卡片.不久{不透明度：.45；}阶段卡片.不久 { 不透明度:.45; }
+.stage-con{字体大小:28PX；}舞台图标 { 字体大小:28PX; }
+.阶段名称{字体大小:14PX；字体-重量:700；边距-顶部:4PX；}阶段名称 { 字体大小:14PX; 字体粗细:700; 上边距:4PX; }
+.子级{字体大小:10PX；颜色：#8b98b3；页边距顶部：2px；}子级 { 字体大小:10PX; 颜色：#8b98b3；上边距:2PX; }
 
 /* ===== 顶栏 ===== */
-.topbar { height:56px; display:flex; align-items:center; justify-content:space-between; padding:max(10px,env(safe-area-inset-top)) 14px 0 14px; background:#fff; border-bottom:1px solid #e6ecf9; flex-shrink:0; }
-.back-btn { background:none; font-size:15px; color:#2451c4; font-weight:600; }
-.topbar-title { font-size:15px; font-weight:700; }
+.顶栏{高度:56px；显示：flex；对齐项目：居中；对齐内容：空格之间；填充：max(10PX，env(安全区域插入顶部))14PX014PX；背景：#fff；下边框:1PX 固体#e6ecf9；弹性收缩:0；}顶栏 { 高度:56PX; 显示:弯曲; 对齐项目:中心; justify-content:间距; 填充:最大值(10PX,env(安全区内置顶)) 14PX 0 14PX; 背景：#fff；下边框:1PX 固体#e6ecf9；挠曲收缩:0; }
+.back-btn{背景:无；字体大小:15PX；颜色：#2451C4；字体粗细:600；}back-btn { 背景:没有一个; 字体大小:15PX; 颜色：#2451c4；字体粗细:600; }
+.顶栏标题{字体大小:15PX；字体-重量:700；}顶栏标题 { 字体大小:15PX; 字体粗细:700; }
 
 /* ===== 地图 ===== */
-.map-scroll { height:calc(100% - 56px); overflow-y:auto; padding:14px; }
-.level-node { display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:12px 14px; margin-bottom:9px; box-shadow:0 2px 8px rgba(36,81,196,.06); }
-.level-node.locked { opacity:.5; }
-.level-node.current { border:2px solid #4f7dfb; }
-.level-badge { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; font-size:14px; }
-.level-badge.done { background:#ffb300; }
+.地图滚动{高度:calc(100%-56PX)；溢出-y:自动；填充:14PX；}地图滚动 { 高度:calc(100% - 56PX); 溢流y:自动; 填充:14PX; }
+.level-node{显示：弯曲；对齐项目：居中；间距：12px；背景：#FFF；边框半径：14px；填充：12px14px；底边距：9px；框阴影：02px8px RGBA(36,81,196,.06);}level-node { 显示:弯曲; 对齐项目:中心; 差距:12PX; 背景：#fff；边界半径:14PX; 填充:12PX 14PX; 底边距:9PX; 箱形阴影:0 2PX 8PX RGBA(36,81,196,.06); }
+.level-node.绑定{不透明度：.5；}level-node.绑定{不透明度：.5；}
+.level-node.当前{边框：2px实体#4f7dfb；}level-node.当前{边界：2px实体#4f7dfb；}
+.水平胸卡{宽度：38px；高度：38px；边框半径：50%；显示：弹性；对齐项目：居中；对齐内容：居中；字体粗细：800；颜色：#FFF；弹性收缩：0；字体大小：14px；}水平胸卡 { 宽度:38PX; 高度:38PX; 边界半径:50%; 显示:弯曲; 对齐项目:中心; justify-content:中心; 字体粗细:800; 颜色：#fff；挠曲收缩:0; 字体大小:14PX; }
+.水平胸卡.已完成{背景：#ffb300；}水平胸卡.已完成 { 背景：#ffb300；}
 .level-badge.current { background:#4f7dfb; }
 .level-badge.locked { background:#b7c2da; }
 .level-info-name { font-size:14px; font-weight:700; }
@@ -41,24 +41,24 @@ button { font-family: inherit; border: none; cursor: pointer; }
 
 /* ===== 答题页 ===== */
 .answer-page { height:100%; display:flex; flex-direction:column; }
-.answer-topbar { height:auto; min-height:56px; padding-bottom:6px; flex-direction:column; align-items:stretch; gap:3px; position:relative; }
+.answer-topbar{height:auto；min-height:56px；padding-bottom:6px；flex-direction:column；align-items:stretch；gap:3px；position:relative；}
 .topbar-mid { display:flex; justify-content:space-between; align-items:center; }
-.topbar-stats { display:flex; gap:10px; font-size:12px; font-weight:700; }
+.topbar-stats{显示：flex；间距：10px；字体大小：12px；字体粗细：700；}
 .dot-green { color:#16a34a; } .dot-red { color:#dc2626; }
-.timer { position:absolute; right:14px; top:max(10px,env(safe-area-inset-top)); font-size:12px; font-weight:700; color:#2451c4; background:#eef4ff; padding:4px 9px; border-radius:10px; }
+.timer{position:absolute；right:14px；top:max(10px，env(安全区域插入顶部))；字体大小：12px；字体粗细：700；颜色：#2451c4；背景：#eef4ff；填充：4px9px；边框半径：10px；}
 
-.question-area { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px 16px; position:relative; }
-.question-card { width:100%; max-width:420px; background:#fff; border-radius:20px; box-shadow:0 8px 24px rgba(36,81,196,.1); display:flex; align-items:center; justify-content:center; font-size:clamp(24px,7vw,42px); font-weight:800; letter-spacing:1px; padding:clamp(10px,4vh,26px) 12px; text-align:center; min-height:70px; }
+.问题区域{flex:1；最小高度：0；显示：flex；对齐项目：居中；对齐内容：居中；填充：6px16px；位置：相对；}
+.问题卡{宽度：100%；最大宽度：420px；背景：#fff；边框半径：20px；框阴影：08px24p rgba(36,81,196,.1);显示：柔线；对齐项目：居中；对齐内容：居中；字体大小：钳形(24px、7vw、42px)；字体粗细：800；字母-间距：1px；填充：clamp(10px，4vh，26px)12px；文本对齐：居中；最小高度：70px；}
 .question-card.correct { background:#e8fbe9; }
 .question-card.wrong { background:#fdecec; }
 
 .speak-btn { flex-shrink:0; margin:0 auto 4px; display:block; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:600; padding:6px 16px; border-radius:20px; }
 
 /* 数字键盘块：答案显示框 + 键盘 */
-#arith-block { flex-shrink:0; display:flex; flex-direction:column; }
-.answer-display { flex-shrink:0; margin:0 16px 6px; min-height:38px; background:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; border:2px solid #4f7dfb; }
+#arith-block{flex-shrink:0；显示：flex；flex-direction:column；}
+.answer-display{弹性收缩：0；边距：016px6px；最小高度：38px；背景：#fff；边框半径：12px；显示：弹性；对齐项目：居中；对齐内容：居中；字体大小：22px；字体粗细：700；边框：2px实心#4f7dfb；}
 .answer-display.placeholder { color:#b7c2da; font-size:15px; font-weight:500; border-color:#e6ecf9; }
-.keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px 12px max(8px,env(safe-area-inset-bottom)); }
+.keypad{display:grid；grid-template-colums:repeat(3，1fr)；间距：6px；填充：6px12px max(8px，env(安全区域插入底部))；}
 .keypad button { height:clamp(38px,6.5vh,52px); border-radius:12px; background:#fff; font-size:19px; font-weight:700; box-shadow:0 2px 6px rgba(36,81,196,.08); }
 .keypad .key-func { background:#fff1f1; color:#dc2626; font-size:14px; }
 .keypad .key-confirm { grid-column:span 3; background:linear-gradient(135deg,#4f7dfb,#2451c4); color:#fff; font-size:17px; }
