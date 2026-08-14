@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<title>口算闯关营</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:#eef4ff; color:#1f2a44; overscroll-behavior:none; }
+button { font-family: inherit; border: none; cursor: pointer; }
+.screen { height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
+
+/* ===== 首页 ===== */
+.home-wrap { height:100%; display:flex; flex-direction:column; padding:20px 16px; background:linear-gradient(180deg,#dbeafe,#eef4ff 40%); overflow-y:auto; }
+.home-title { font-size:28px; font-weight:800; color:#2451c4; text-align:center; margin-top:6px; }
+.home-sub { font-size:13px; color:#5a6b8c; text-align:center; margin:4px 0 6px; }
+.streak-display { text-align:center; font-size:13px; color:#ff7a00; font-weight:700; min-height:18px; margin-bottom:8px; }
+.stage-list { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+.stage-card { background:#fff; border-radius:16px; padding:14px 6px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); transition:transform .1s; }
+.stage-card:active { transform:scale(.95); }
+.stage-card.soon { opacity:.45; }
+.stage-card.mode-kg { background:linear-gradient(160deg,#fff9ec,#fff); border:1.5px solid #ffe4b3; }
+.stage-card.mode-elem { background:linear-gradient(160deg,#eef4ff,#fff); border:1.5px solid #cfdcff; }
+.stage-icon { font-size:28px; }
+.stage-name { font-size:14px; font-weight:700; margin-top:4px; }
+.stage-sub { font-size:10px; color:#8b98b3; margin-top:2px; }
+.stage-progress-mini { font-size:9px; color:#4f7dfb; font-weight:700; margin-top:3px; }
+
+/* 每日任务卡片 */
+.daily-card { border-radius:16px; padding:14px 16px; margin-bottom:12px; box-shadow:0 4px 14px rgba(36,81,196,.1); transition:transform .1s; }
+.daily-card:active { transform:scale(.98); }
+.daily-elem { background:linear-gradient(135deg,#fff7e0,#ffedbb); border:1.5px solid #f5c451; }
+.daily-kg { background:linear-gradient(135deg,#eafff1,#d6ffe6); border:1.5px solid #7ee2a8; }
+.daily-title { font-size:15px; font-weight:800; color:#1f2a44; }
+.daily-status { font-size:12px; color:#5a6b8c; margin-top:4px; }
+
+/* 关卡进度概览条 */
+.progress-wrap { margin-bottom:10px; padding:0 2px; }
+.progress-text { font-size:12px; color:#5a6b8c; margin-bottom:5px; font-weight:600; }
+.progress-bar { height:8px; background:#e6ecf9; border-radius:5px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,#4f7dfb,#2451c4); border-radius:5px; transition:width .3s; }
+
+/* ===== 顶栏 ===== */
+.topbar { height:56px; display:flex; align-items:center; justify-content:space-between; padding:max(10px,env(safe-area-inset-top)) 14px 0 14px; background:#fff; border-bottom:1px solid #e6ecf9; flex-shrink:0; }
+.back-btn { background:none; font-size:15px; color:#2451c4; font-weight:600; }
+.topbar-title { font-size:15px; font-weight:700; }
+
+/* ===== 地图 ===== */
+.map-scroll { height:calc(100% - 56px); overflow-y:auto; padding:14px; }
+.level-node { display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:12px 14px; margin-bottom:9px; box-shadow:0 2px 8px rgba(36,81,196,.06); transition:transform .1s; }
+.level-node:active { transform:scale(.97); }
+.level-node.locked { opacity:.5; }
+.level-node.current { border:2px solid #4f7dfb; }
+.level-badge { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; flex-shrink:0; font-size:14px; }
+.level-badge.done { background:#ffb300; }
+.level-badge.current { background:#4f7dfb; }
+.level-badge.locked { background:#b7c2da; }
+.level-info-name { font-size:14px; font-weight:700; }
+.level-info-sub { font-size:11px; color:#8b98b3; margin-top:2px; }
+
+/* ===== 答题页 ===== */
+.answer-page { height:100%; display:flex; flex-direction:column; }
+.answer-topbar { height:auto; min-height:56px; padding-bottom:6px; flex-direction:column; align-items:stretch; gap:3px; position:relative; }
+.topbar-mid { display:flex; justify-content:space-between; align-items:center; }
+.topbar-stats { display:flex; gap:10px; font-size:12px; font-weight:700; }
+.dot-green { color:#16a34a; } .dot-red { color:#dc2626; }
+.timer { position:absolute; right:14px; top:max(10px,env(safe-area-inset-top)); font-size:12px; font-weight:700; color:#2451c4; background:#eef4ff; padding:4px 9px; border-radius:10px; }
+
+.question-area { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:6px 16px; position:relative; }
+.question-card { width:100%; max-width:420px; background:#fff; border-radius:20px; box-shadow:0 8px 24px rgba(36,81,196,.1); display:flex; align-items:center; justify-content:center; font-size:clamp(24px,7vw,42px); font-weight:800; letter-spacing:1px; padding:clamp(10px,4vh,26px) 12px; text-align:center; min-height:70px; }
+.question-card.correct { background:#e8fbe9; }
+.question-card.wrong { background:#fdecec; }
+
+.speak-btn { flex-shrink:0; margin:0 auto 4px; display:block; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:600; padding:6px 16px; border-radius:20px; }
+
+/* 数字键盘块：答案显示框 + 键盘 */
+#arith-block { flex-shrink:0; display:flex; flex-direction:column; }
+.answer-display { flex-shrink:0; margin:0 16px 6px; min-height:38px; background:#fff; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; border:2px solid #4f7dfb; }
+.answer-display.placeholder { color:#b7c2da; font-size:15px; font-weight:500; border-color:#e6ecf9; }
+.keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px 12px max(8px,env(safe-area-inset-bottom)); }
+.keypad button { height:clamp(38px,6.5vh,52px); border-radius:12px; background:#fff; font-size:19px; font-weight:700; box-shadow:0 2px 6px rgba(36,81,196,.08); }
+.keypad .key-func { background:#fff1f1; color:#dc2626; font-size:14px; }
+.keypad .key-confirm { grid-column:span 3; background:linear-gradient(135deg,#4f7dfb,#2451c4); color:#fff; font-size:17px; }
+
+/* 选择题块 */
+#choice-block { flex-shrink:0; display:none; grid-template-columns:repeat(2,1fr); gap:10px; padding:8px 16px max(14px,env(safe-area-inset-bottom)); }
+.choice-opt { min-height:64px; border-radius:16px; background:#fff; font-size:22px; font-weight:700; box-shadow:0 3px 10px rgba(36,81,196,.1); padding:8px; display:flex; align-items:center; justify-content:center; }
+.choice-opt.has-visual { min-height:96px; }
+.choice-opt:disabled { opacity:.85; }
+.choice-opt.opt-correct { background:#dcfce7; border:2px solid #16a34a; }
+.choice-opt.opt-wrong { background:#fee2e2; border:2px solid #dc2626; }
+.question-card svg { max-width:100%; }
+.money-chip { background:linear-gradient(135deg,#fef3c7,#fde68a); border:2.5px solid #d97706; border-radius:12px; padding:10px 16px; font-size:22px; font-weight:800; color:#92400e; display:inline-flex; align-items:baseline; gap:3px; }
+.money-unit { font-size:13px; font-weight:700; }
+
+/* 幼儿园模式：更轻松可爱的配色 */
+body.kg-mode .question-card { background:#fffdf5; }
+body.kg-mode .choice-opt { border-radius:20px; }
+
+/* 连击称号浮层 */
+.combo-badge { position:absolute; left:50%; top:14%; transform:translate(-50%,0) scale(.6); display:flex; align-items:center; gap:8px; padding:10px 20px; border-radius:999px; font-weight:800; color:#fff; font-size:18px; opacity:0; pointer-events:none; animation:badgePop 1.4s ease forwards; box-shadow:0 8px 24px rgba(0,0,0,.2); z-index:5; }
+@keyframes badgePop { 0%{opacity:0;transform:translate(-50%,10px) scale(.5);} 15%{opacity:1;transform:translate(-50%,0) scale(1.1);} 25%{transform:translate(-50%,0) scale(1);} 80%{opacity:1;} 100%{opacity:0;transform:translate(-50%,-10px) scale(.9);} }
+.badge-lv1{background:linear-gradient(135deg,#ff9966,#ff5e3a);}
+.badge-lv2{background:linear-gradient(135deg,#ffd166,#ff9f1c);box-shadow:0 0 24px rgba(255,159,28,.5);}
+.badge-lv3{background:linear-gradient(135deg,#9d6bff,#5b3df0);}
+.badge-lv4{background:linear-gradient(135deg,#ffd700,#2451c4);box-shadow:0 0 30px rgba(255,215,0,.6);}
+.badge-lv5{background:linear-gradient(135deg,#ff3d81,#ffb300);box-shadow:0 0 40px rgba(255,61,129,.7);}
+
+/* ===== 结算页 ===== */
+.settlement-wrap { height:100%; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:36px 20px max(20px,env(safe-area-inset-bottom)); text-align:center; gap:12px; }
+.settle-emoji { font-size:56px; }
+.settle-title { font-size:24px; font-weight:800; color:#16a34a; }
+.settle-title.fail { color:#dc2626; }
+.settle-stats { display:flex; gap:12px; width:100%; max-width:380px; margin:8px 0; justify-content:center; }
+.stat-box { flex:1; border-radius:16px; padding:14px 8px; max-width:180px; }
+.stat-green{background:#e8fbe9;} .stat-blue{background:#eaf1ff;}
+.stat-num{font-size:24px;font-weight:800;}
+.stat-green .stat-num{color:#16a34a;} .stat-blue .stat-num{color:#2451c4;}
+.stat-label{font-size:11px;color:#8b98b3;margin-top:3px;}
+#stat-stars { font-size:34px; color:#ffb300; }
+.settle-titles-label{font-size:13px;color:#8b98b3;}
+.settle-titles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:400px;}
+.settle-titles .pill{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;color:#fff;font-weight:700;font-size:13px;}
+.btn-primary{background:linear-gradient(135deg,#4f7dfb,#2451c4);color:#fff;font-size:16px;font-weight:700;padding:15px 26px;border-radius:16px;box-shadow:0 6px 16px rgba(36,81,196,.3);}
+.btn-primary.big{width:100%;max-width:340px;}
+.btn-secondary{background:#fff;color:#2451c4;border:1.5px solid #cfdcff;font-size:14px;font-weight:600;padding:11px 18px;border-radius:14px;flex:1;}
+.settle-secondary{display:flex;gap:10px;width:100%;max-width:340px;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- 首页 -->
+<div id="screen-home" class="screen">
+  <div class="home-wrap">
+    <h1 class="home-title">口算闯关营</h1>
+    <p class="home-sub">每天练一点，数学更厉害！</p>
+    <div class="streak-display" id="streak-display"></div>
+    <div class="stage-list" id="stage-list"></div>
+  </div>
+</div>
+
+<!-- 地图页 -->
+<div id="screen-map" class="screen" style="display:none;">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">← 返回</button>
+    <div class="topbar-title" id="map-stage-title">地图</div>
+    <div style="width:44px;"></div>
+  </div>
+  <div class="map-scroll" id="map-list"></div>
+</div>
+
+<!-- 答题页 -->
+<div id="screen-answer" class="screen" style="display:none;">
+  <div class="answer-page">
+    <div class="topbar answer-topbar">
+      <button class="back-btn" id="back-btn-answer">← 返回</button>
+      <div class="topbar-mid">
+        <div class="topbar-title" id="level-title">关卡</div>
+        <div class="topbar-stats" id="elem-hud">
+          <span id="qindex">第1题</span>
+          <span class="dot-green" id="correct-count">🟢0</span>
+          <span class="dot-red" id="wrong-count">🔴0</span>
+        </div>
+        <div class="topbar-stats" id="kg-hud" style="display:none;"><span id="qindex-kg"></span></div>
+      </div>
+      <div class="timer" id="timer">10:00</div>
+    </div>
+
+    <div class="question-area">
+      <div class="question-card" id="question-card"></div>
+      <div id="combo-badge-layer"></div>
+    </div>
+
+    <button class="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button>
+
+    <div id="arith-block">
+      <div class="answer-display placeholder" id="answer-display">请输入答案</div>
+      <div class="keypad">
+        <button onclick="keypadInput('1')">1</button><button onclick="keypadInput('2')">2</button><button onclick="keypadInput('3')">3</button>
+        <button onclick="keypadInput('4')">4</button><button onclick="keypadInput('5')">5</button><button onclick="keypadInput('6')">6</button>
+        <button onclick="keypadInput('7')">7</button><button onclick="keypadInput('8')">8</button><button onclick="keypadInput('9')">9</button>
+        <button class="key-func" onclick="keypadClear()">清除</button><button onclick="keypadInput('0')">0</button><button class="key-func" onclick="keypadDelete()">删除</button>
+        <button class="key-confirm" onclick="keypadConfirm()">确定</button>
+      </div>
+    </div>
+
+    <div id="choice-block"></div>
+  </div>
+</div>
+
+<!-- 结算页 -->
+<div id="screen-settlement" class="screen" style="display:none;">
+  <div class="settlement-wrap">
+    <div class="settle-emoji" id="settle-emoji">🎉</div>
+    <div class="settle-title" id="settle-title">闯关成功！</div>
+    <div class="settle-stats">
+      <div class="stat-box stat-green" id="stat-correct-wrap">
+        <div class="stat-num" id="stat-correct">-</div>
+        <div class="stat-label">首轮正确</div>
+      </div>
+      <div class="stat-box stat-green" id="stat-stars-wrap" style="display:none;">
+        <div id="stat-stars">★★★</div>
+        <div class="stat-label">本关评价</div>
+      </div>
+      <div class="stat-box stat-blue">
+        <div class="stat-num" id="stat-time">00:00</div>
+        <div class="stat-label">用时</div>
+      </div>
+    </div>
+    <div class="settle-titles-label" id="titles-label">🎖 本关评级</div>
+    <div class="settle-titles" id="settle-titles"></div>
+    <button class="btn-primary big" id="btn-next-level" onclick="challengeNext()">挑战下一关</button>
+    <div class="settle-secondary">
+      <button class="btn-secondary" onclick="goToCurrentMap()">返回地图</button>
+      <button class="btn-secondary" id="btn-retry-level" onclick="retryLevel()">再玩一次</button>
+    </div>
+  </div>
+</div>
+
+<!-- 失败页 -->
+<div id="screen-failed" class="screen" style="display:none;">
+  <div class="settlement-wrap">
+    <div class="settle-emoji">😅</div>
+    <div class="settle-title fail">挑战失败，再来一次吧！</div>
+    <button class="btn-primary big" onclick="retryLevel()">重新挑战</button>
+    <div class="settle-secondary">
+      <button class="btn-secondary" onclick="goToCurrentMap()">返回地图</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 通用工具 =====
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pick(pool, n) { return shuffle(pool).slice(0, Math.min(n, pool.length)); }
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+// ===== 算术题生成（数字键盘类） =====
+function numText(n) { return String(n); }
+
+function makeArith(a, op, b, answer) {
+  const opWord = op === '+' ? '加' : '减';
+  return {
+    type: 'arith',
+    expression: `${a} ${op} ${b} = ?`,
+    answer,
+    speechText: `${numText(a)}${opWord}${numText(b)}等于多少`
+  };
+}
+
+function genAddPool(max, opts = {}) {
+  const { noCarry = false, mustCarry = false, minSum = 0, minA = 0 } = opts;
+  const pool = [];
+  for (let a = minA; a <= max; a++) {
+    for (let b = 0; b <= max; b++) {
+      const sum = a + b;
+      if (sum > max) continue;
+      if (sum < minSum) continue;
+      if (noCarry && (a % 10 + b % 10) >= 10) continue;
+      if (mustCarry && (a % 10 + b % 10) < 10) continue;
+      if (a === 0 && b === 0) continue;
+      pool.push(makeArith(a, '+', b, sum));
+    }
+  }
+  return pool;
+}
+function genSubPool(max, opts = {}) {
+  const { noBorrow = null, minA = 0 } = opts;
+  const pool = [];
+  for (let a = minA; a <= max; a++) {
+    for (let b = 0; b <= a; b++) {
+      const diff = a - b;
+      if (noBorrow === true && (a % 10) < (b % 10)) continue;
+      if (noBorrow === false && (a % 10) >= (b % 10)) continue;
+      if (a === 0 && b === 0) continue;
+      pool.push(makeArith(a, '-', b, diff));
+    }
+  }
+  return pool;
+}
+function genMixPool(max, opts = {}) {
+  return shuffle([...genAddPool(max, opts), ...genSubPool(max, opts)]);
+}
+
+// 整十数加减整十数
+function genTensAddPool(max) {
+  const pool = [];
+  for (let a = 10; a <= max; a += 10) for (let b = 10; b <= max; b += 10) {
+    if (a + b <= max) pool.push(makeArith(a, '+', b, a + b));
+  }
+  return pool;
+}
+function genTensSubPool(max) {
+  const pool = [];
+  for (let a = 20; a <= max; a += 10) for (let b = 10; b <= a; b += 10) {
+    pool.push(makeArith(a, '-', b, a - b));
+  }
+  return pool;
+}
+// 两位数加减一位数（默认不进位/不退位，符合一下册教材顺序）
+function genTwoOneAddPool(max, opts = {}) {
+  const { mustCarry = false } = opts;
+  const pool = [];
+  for (let a = 10; a <= 99; a++) for (let b = 1; b <= 9; b++) {
+    const sum = a + b;
+    if (sum > max) continue;
+    const carries = (a % 10 + b) >= 10;
+    if (mustCarry && !carries) continue;
+    if (!mustCarry && carries) continue;
+    pool.push(makeArith(a, '+', b, sum));
+  }
+  return pool;
+}
+function genTwoOneSubPool(max, opts = {}) {
+  const { mustBorrow = false } = opts;
+  const pool = [];
+  for (let a = 10; a <= max; a++) for (let b = 1; b <= 9; b++) {
+    if (b > a) continue;
+    const borrows = (a % 10) < b;
+    if (mustBorrow && !borrows) continue;
+    if (!mustBorrow && borrows) continue;
+    pool.push(makeArith(a, '-', b, a - b));
+  }
+  return pool;
+}
+// 生成一个"取N题"的关卡内容函数（返回array，供 getLevelContent 调用）
+function arithLevel(poolFn, count) {
+  return () => pick(poolFn(), count);
+}
+
+// ===== 选择题生成（点选/选择题类，幼儿园及部分小学概念题共用） =====
+// option: { label(展示文字/emoji), correct(bool), size(可选，用于大小/高矮对比的字号) }
+function makeChoice(promptText, speechText, options) {
+  return { type: 'choice', promptText, speechText, options: shuffle(options) };
+}
+
+function starsStr(n) { return '⭐'.repeat(n); }
+function applesStr(n) { return '🍎'.repeat(n); }
+
+// ===== 可视化组件（钟表/分数/人民币/图形），用于替代纯文字/emoji的题目呈现 =====
+function clockSVG(hour, minute) {
+  const h = hour % 12;
+  const hourAngle = h * 30 + minute * 0.5 - 90;
+  const minAngle = minute * 6 - 90;
+  const hx = 50 + 20 * Math.cos(hourAngle * Math.PI / 180);
+  const hy = 50 + 20 * Math.sin(hourAngle * Math.PI / 180);
+  const mx = 50 + 32 * Math.cos(minAngle * Math.PI / 180);
+  const my = 50 + 32 * Math.sin(minAngle * Math.PI / 180);
+  return `<svg viewBox="0 0 100 100" width="86" height="86">
+    <circle cx="50" cy="50" r="46" fill="#fff" stroke="#2451c4" stroke-width="4"/>
+    <text x="50" y="20" font-size="11" text-anchor="middle" fill="#1f2a44">12</text>
+    <text x="82" y="54" font-size="11" text-anchor="middle" fill="#1f2a44">3</text>
+    <text x="50" y="88" font-size="11" text-anchor="middle" fill="#1f2a44">6</text>
+    <text x="18" y="54" font-size="11" text-anchor="middle" fill="#1f2a44">9</text>
+    <line x1="50" y1="50" x2="${hx}" y2="${hy}" stroke="#1f2a44" stroke-width="4.5" stroke-linecap="round"/>
+    <line x1="50" y1="50" x2="${mx}" y2="${my}" stroke="#4f7dfb" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="3.5" fill="#1f2a44"/>
+  </svg>`;
+}
+function fractionSVG(num, den) {
+  const w = 64 / den;
+  let rects = '';
+  for (let i = 0; i < den; i++) {
+    const filled = i < num;
+    rects += `<rect x="${8 + i * w}" y="16" width="${w - 2}" height="32" fill="${filled ? '#4f7dfb' : '#eef4ff'}" stroke="#2451c4" stroke-width="2"/>`;
+  }
+  return `<svg viewBox="0 0 80 64" width="90" height="72">${rects}</svg>`;
+}
+function moneyChip(value, unit) {
+  const u = unit || '元';
+  const prefix = u === '元' ? '¥' : '';
+  return `<div class="money-chip">${prefix}${value}<span class="money-unit">${u}</span></div>`;
+}
+const SHAPE_PATHS = {
+  circle: '<circle cx="40" cy="40" r="32"/>',
+  square: '<rect x="10" y="10" width="60" height="60"/>',
+  triangle: '<polygon points="40,8 74,70 6,70"/>',
+  rectangle: '<rect x="6" y="20" width="68" height="40"/>',
+  pentagon: '<polygon points="40,6 74,30 61,70 19,70 6,30"/>',
+};
+function shapeSVG(shape, color) {
+  return `<svg viewBox="0 0 80 80" width="60" height="60"><g fill="${color || '#4f7dfb'}">${SHAPE_PATHS[shape] || ''}</g></svg>`;
+}
+function renderVisual(v) {
+  if (!v) return '';
+  if (v.type === 'clock') return clockSVG(v.hour, v.minute);
+  if (v.type === 'fraction') return fractionSVG(v.num, v.den);
+  if (v.type === 'money') return moneyChip(v.value, v.unit);
+  if (v.type === 'shape') return shapeSVG(v.shape, v.color);
+  return '';
+}
+
+window.KS = { shuffle, pick, randInt, makeArith, genAddPool, genSubPool, genMixPool,
+  genTensAddPool, genTensSubPool, genTwoOneAddPool, genTwoOneSubPool,
+  arithLevel, makeChoice, starsStr, applesStr, renderVisual };
+
+
+// ===== 幼儿园阶段关卡内容 =====
+(function () {
+  const { makeChoice, starsStr, applesStr, randInt, arithLevel, genAddPool, genSubPool, genMixPool, shuffle, pick } = window.KS;
+
+  // ---------- 小班 10关 ----------
+  const XIAOBAN = [
+    { name: '形状小侦探', content: () => [
+      makeChoice('请找出圆形', '请找出圆形', [{visual:{type:'shape',shape:'circle'},correct:true},{visual:{type:'shape',shape:'square'}},{visual:{type:'shape',shape:'triangle'}}]),
+      makeChoice('请找出方形', '请找出方形', [{visual:{type:'shape',shape:'triangle'}},{visual:{type:'shape',shape:'square'},correct:true},{visual:{type:'shape',shape:'circle'}}]),
+      makeChoice('请找出三角形', '请找出三角形', [{visual:{type:'shape',shape:'square'}},{visual:{type:'shape',shape:'circle'}},{visual:{type:'shape',shape:'triangle'},correct:true}]),
+      makeChoice('请找出圆形', '请找出圆形', [{visual:{type:'shape',shape:'triangle'}},{visual:{type:'shape',shape:'circle'},correct:true},{visual:{type:'shape',shape:'square'}}]),
+      makeChoice('请找出方形', '请找出方形', [{visual:{type:'shape',shape:'circle'}},{visual:{type:'shape',shape:'triangle'}},{visual:{type:'shape',shape:'square'},correct:true}]),
+    ]},
+    { name: '大小比一比', content: () => [
+      makeChoice('哪个更大呀', '哪个更大呀', [{label:'🍎',size:64,correct:true},{label:'🍎',size:26}]),
+      makeChoice('哪个更小呀', '哪个更小呀', [{label:'🍉',size:60},{label:'🍉',size:24,correct:true}]),
+      makeChoice('哪个更大呀', '哪个更大呀', [{label:'⚽',size:30},{label:'⚽',size:68,correct:true}]),
+      makeChoice('哪个更小呀', '哪个更小呀', [{label:'🐟',size:22,correct:true},{label:'🐟',size:58}]),
+    ]},
+    { name: '谁多谁少', content: () => [
+      makeChoice('哪边星星更多', '哪边星星更多', [{label:starsStr(2)},{label:starsStr(5),correct:true}]),
+      makeChoice('哪边苹果更少', '哪边苹果更少', [{label:applesStr(4)},{label:applesStr(1),correct:true}]),
+      makeChoice('哪边星星更多', '哪边星星更多', [{label:starsStr(6),correct:true},{label:starsStr(3)}]),
+      makeChoice('哪边苹果更少', '哪边苹果更少', [{label:applesStr(2),correct:true},{label:applesStr(5)}]),
+    ]},
+    { name: '高矮排排队', content: () => [
+      makeChoice('谁更高呀', '谁更高呀', [{label:'🌳',size:70,correct:true},{label:'🌳',size:26}]),
+      makeChoice('谁更矮呀', '谁更矮呀', [{label:'🕯',size:60},{label:'🕯',size:22,correct:true}]),
+      makeChoice('谁更高呀', '谁更高呀', [{label:'🦒',size:28},{label:'🦒',size:66,correct:true}]),
+    ]},
+    { name: '数数小能手', content: () => [1,2,3,4,5].map(n =>
+      makeChoice(`数一数：${starsStr(n)}`, '数一数，一共有几个星星', shuffle([
+        {label:String(n),correct:true},
+        {label:String(Math.max(1,n-1))},
+        {label:String(Math.min(5,n+1))}
+      ]))
+    )},
+    { name: '数字宝宝找朋友', content: () => [1,2,3,4,5].map(n =>
+      makeChoice(`请选出${n}个苹果`, `请选出${n}个苹果`, shuffle([
+        {label:applesStr(n),correct:true},
+        {label:applesStr(Math.max(1,n-1))},
+        {label:applesStr(Math.min(5,n+1))}
+      ]))
+    )},
+    { name: '数字捉迷藏', content: () => [1,2,3,4,5].map(n =>
+      makeChoice(`${starsStr(n)} 这是数字几`, `一共这么多星星，这是数字几`, shuffle([
+        {label:String(n),correct:true},
+        {label:String(Math.max(1,n-1))},
+        {label:String(Math.min(5,n+1))}
+      ]))
+    )},
+    { name: '数字小火车', content: () => [
+      makeChoice('1，2，（ ），4', '1、2、空格、4，空格应该填几', [{label:'3',correct:true},{label:'5'},{label:'1'}]),
+      makeChoice('（ ），2，3，4', '空格、2、3、4，空格应该填几', [{label:'5'},{label:'1',correct:true},{label:'3'}]),
+      makeChoice('2，3，（ ），5', '2、3、空格、5，空格应该填几', [{label:'4',correct:true},{label:'6'},{label:'2'}]),
+    ]},
+    { name: '一个和许多', content: () => [
+      makeChoice(`${applesStr(1)} 这是一个还是许多`, '这是一个还是许多', [{label:'一个',correct:true},{label:'许多'}]),
+      makeChoice(`${applesStr(6)} 这是一个还是许多`, '这是一个还是许多', [{label:'一个'},{label:'许多',correct:true}]),
+      makeChoice(`${starsStr(1)} 这是一个还是许多`, '这是一个还是许多', [{label:'一个',correct:true},{label:'许多'}]),
+      makeChoice(`${starsStr(7)} 这是一个还是许多`, '这是一个还是许多', [{label:'一个'},{label:'许多',correct:true}]),
+    ]},
+    { name: '综合复习', content: () => {
+      const all = [
+        ...XIAOBAN[0].content(), ...XIAOBAN[2].content(), ...XIAOBAN[4].content(),
+        ...XIAOBAN[6].content(), ...XIAOBAN[8].content()
+      ];
+      return pick(all, 8);
+    }},
+  ];
+
+  // ---------- 中班 15+3=18关 ----------
+  const ZHONGBAN = [
+    { name: '数数小明星', content: () => [6,7,8,9,10].map(n =>
+      makeChoice(`数一数：${starsStr(n)}`, '数一数，一共有几个星星', shuffle([
+        {label:String(n),correct:true},{label:String(n-2)},{label:String(Math.min(10,n+2))}
+      ]))
+    )},
+    { name: '数字配送员', content: () => [6,7,8,9,10].map(n =>
+      makeChoice(`请选出${n}个苹果`, `请选出${n}个苹果`, shuffle([
+        {label:applesStr(n),correct:true},{label:applesStr(n-2)},{label:applesStr(Math.min(10,n+2))}
+      ]))
+    )},
+    { name: '数字好朋友', content: () => [6,7,8,9,10].map(n =>
+      makeChoice(`${starsStr(n)} 这是数字几`, '一共这么多，这是数字几', shuffle([
+        {label:String(n),correct:true},{label:String(n-1)},{label:String(Math.min(10,n+1))}
+      ]))
+    )},
+    { name: '谁最多', content: () => [
+      makeChoice('哪组最多', '哪组最多', [{label:starsStr(4)},{label:starsStr(9),correct:true},{label:starsStr(6)}]),
+      makeChoice('哪组最少', '哪组最少', [{label:starsStr(8)},{label:starsStr(3),correct:true},{label:starsStr(5)}]),
+      makeChoice('哪组最多', '哪组最多', [{label:applesStr(7)},{label:applesStr(2)},{label:applesStr(10),correct:true}]),
+    ]},
+    { name: '数字排排坐', content: () => [
+      makeChoice('5，6，（ ），8', '5、6、空格、8，填几', [{label:'7',correct:true},{label:'9'},{label:'4'}]),
+      makeChoice('（ ），8，9，10', '空格、8、9、10，填几', [{label:'11'},{label:'7',correct:true},{label:'6'}]),
+      makeChoice('7，（ ），9，10', '7、空格、9、10，填几', [{label:'8',correct:true},{label:'6'},{label:'11'}]),
+    ]},
+    { name: '变来变去都一样', content: () => [
+      makeChoice(`${starsStr(5)} 换个排法还是这样：⭐⭐ ⭐⭐⭐ 一共还是几个`, '不管怎么摆，一共还是几个', [{label:'5',correct:true},{label:'4'},{label:'6'}]),
+      makeChoice('5个苹果分成两堆，2个和3个，一共还是几个', '5个苹果分成两堆，一共还是几个', [{label:'5',correct:true},{label:'6'},{label:'4'}]),
+    ]},
+    { name: '数字分分乐', content: () => [
+      makeChoice('10可以分成6和几', '10可以分成6和几', [{label:'4',correct:true},{label:'5'},{label:'3'}]),
+      makeChoice('10可以分成3和几', '10可以分成3和几', [{label:'6'},{label:'7',correct:true},{label:'8'}]),
+      makeChoice('8可以分成5和几', '8可以分成5和几', [{label:'3',correct:true},{label:'4'},{label:'2'}]),
+      makeChoice('9可以分成4和几', '9可以分成4和几', [{label:'6'},{label:'5',correct:true},{label:'4'}]),
+    ]},
+    { name: '排队小达人', content: () => [
+      makeChoice('🐰🐱🐶🐷🐭 小猫排第几', '排队里，小猫排第几', [{label:'第1个'},{label:'第2个',correct:true},{label:'第3个'}]),
+      makeChoice('🐰🐱🐶🐷🐭 小狗排第几', '排队里，小狗排第几', [{label:'第2个'},{label:'第4个'},{label:'第3个',correct:true}]),
+    ]},
+    { name: '规律小侦探', content: () => [
+      makeChoice('🔴🔵🔴🔵（ ）下一个是什么', 'ABAB规律，下一个是什么', [{label:'🔴',correct:true},{label:'🔵'}]),
+      makeChoice('⭐🌙⭐🌙（ ）下一个是什么', 'ABAB规律，下一个是什么', [{label:'⭐'},{label:'🌙',correct:true}]),
+      makeChoice('🍎🍌🍎🍌（ ）下一个是什么', 'ABAB规律，下一个是什么', [{label:'🍎',correct:true},{label:'🍌'}]),
+    ]},
+    { name: '方位小探险', content: () => [
+      makeChoice('🐦在树的上面还是下面', '小鸟在树的上面还是下面', [{label:'上面',correct:true},{label:'下面'}]),
+      makeChoice('🐰在洞的里面还是外面', '兔子在洞的里面还是外面', [{label:'里面',correct:true},{label:'外面'}]),
+    ]},
+    { name: '数字在哪里', content: () => [
+      makeChoice('生活中哪里能看到数字', '生活中哪里能看到数字', [{label:'🕐时钟',correct:true},{label:'🌳大树'}]),
+      makeChoice('生活中哪里能看到数字', '生活中哪里能看到数字', [{label:'🌸小花'},{label:'💰钱',correct:true}]),
+    ]},
+    { name: '分类小管家', content: () => [
+      makeChoice('🍎🍌🍎 哪种水果更多', '哪种水果更多', [{label:'苹果',correct:true},{label:'香蕉'}]),
+      makeChoice('🔴🔵🔴🔴 哪种颜色更多', '哪种颜色更多', [{label:'红色',correct:true},{label:'蓝色'}]),
+    ]},
+    { name: '合在一起是多少', content: () => [1,2,3].map(() => {
+      const a = randInt(1,3), b = randInt(1,2);
+      return makeChoice(`${applesStr(a)} 和 ${applesStr(b)} 合起来是几个`, `${a}和${b}合起来是几个`, shuffle([
+        {label:String(a+b),correct:true},{label:String(a+b+1)},{label:String(Math.max(1,a+b-1))}
+      ]));
+    })},
+    { name: '还剩几个', content: () => [1,2,3].map(() => {
+      const a = randInt(3,5), b = randInt(1,a-1);
+      return makeChoice(`原来有${a}个，吃了${b}个，还剩几个`, `原来有${a}个，吃了${b}个，还剩几个`, shuffle([
+        {label:String(a-b),correct:true},{label:String(a-b+1)},{label:String(Math.max(0,a-b-1))}
+      ]));
+    })},
+    { name: '综合复习', content: () => pick([
+        ...ZHONGBAN[0].content(), ...ZHONGBAN[3].content(), ...ZHONGBAN[6].content(),
+        ...ZHONGBAN[9].content(), ...ZHONGBAN[12].content()
+      ], 8)
+    },
+    // 新增3关：10以内加减法与综合
+    { name: '加法小旅程', content: arithLevel(() => genAddPool(10), 10) },
+    { name: '减法小旅程', content: arithLevel(() => genSubPool(10), 10) },
+    { name: '加减大集合', content: arithLevel(() => genMixPool(10), 10) },
+  ];
+
+  // ---------- 大班 16+7=23关 ----------
+  const DABAN = [
+    { name: '数数大挑战', content: () => [12,15,18,20].map(n =>
+      makeChoice(`从1数到${n}，最后一个数是几`, `从1数到${n}，最后一个数是几`, [{label:String(n),correct:true},{label:String(n-1)},{label:String(n+1)}])
+    )},
+    { name: '11-20好朋友', content: () => shuffle(Array.from({length:10},(_,i)=>i+11)).slice(0,6).map(n =>
+      makeChoice(`这是数字几：${n}`, `这是数字几`, [{label:String(n),correct:true},{label:String(n-1)},{label:String(n+1)}])
+    )},
+    { name: '加法小高手', content: arithLevel(() => genAddPool(10), 12) },
+    { name: '减法小高手', content: arithLevel(() => genSubPool(10), 12) },
+    { name: '加减大闯关', content: arithLevel(() => genMixPool(10), 15) },
+    { name: '数字分合大挑战', content: () => [
+      makeChoice('10可以分成7和几', '10可以分成7和几', [{label:'2'},{label:'3',correct:true},{label:'4'}]),
+      makeChoice('10可以分成4和几', '10可以分成4和几', [{label:'6',correct:true},{label:'5'},{label:'7'}]),
+      makeChoice('9可以分成2和几', '9可以分成2和几', [{label:'6'},{label:'7',correct:true},{label:'8'}]),
+      makeChoice('8可以分成3和几', '8可以分成3和几', [{label:'5',correct:true},{label:'4'},{label:'6'}]),
+    ]},
+    { name: '加法小进阶', content: arithLevel(() => genAddPool(20, {noCarry:true, minSum:11}), 15) },
+    { name: '减法小进阶', content: arithLevel(() => genSubPool(20, {noBorrow:true, minA:11}), 15) },
+    { name: '单双数大冒险', content: () => shuffle(Array.from({length:10},(_,i)=>i+1)).slice(0,6).map(n =>
+      makeChoice(`${n}是单数还是双数`, `${n}是单数还是双数`, [{label:'单数',correct: n%2===1},{label:'双数',correct: n%2===0}])
+    )},
+    { name: '规律大师', content: () => [
+      makeChoice('🔴🔵🟡🔴🔵🟡（ ）下一个是什么', 'ABC规律，下一个是什么', [{label:'🔴',correct:true},{label:'🔵'},{label:'🟡'}]),
+      makeChoice('1，2，3，（ ），5', '递增规律，空格填几', [{label:'4',correct:true},{label:'6'},{label:'3'}]),
+      makeChoice('2，4，6，（ ）', '递增规律(每次+2)，空格填几', [{label:'7'},{label:'8',correct:true},{label:'9'}]),
+    ]},
+    { name: '立体图形王国', content: () => [
+      makeChoice('哪个是球体', '哪个是球体', [{label:'⚽',correct:true},{label:'📦'},{label:'🧊'}]),
+      makeChoice('哪个是正方体', '哪个是正方体', [{label:'⚽'},{label:'🎲',correct:true},{label:'🥫'}]),
+      makeChoice('哪个是圆柱体', '哪个是圆柱体', [{label:'🥫',correct:true},{label:'🎲'},{label:'⚽'}]),
+    ]},
+    { name: '时间小主人', content: () => [1,3,6,9].map(h => {
+      const q = makeChoice(`现在几点`, `现在是几点`, [
+        {label:`${h}点`,correct:true},{label:`${h===12?1:h+1}点`},{label:'12点'}
+      ]);
+      q.promptVisual = { type: 'clock', hour: h, minute: 0 };
+      return q;
+    })},
+    { name: '小小采购员', content: () => [
+      makeChoice('买1元的东西，应该用哪张钱', '买1元的东西，应该用哪张钱', [
+        {visual:{type:'money',value:1},correct:true},{visual:{type:'money',value:5}},{visual:{type:'money',value:10}}
+      ]),
+      makeChoice('买5元的东西，应该用哪张钱', '买5元的东西，应该用哪张钱', [
+        {visual:{type:'money',value:1}},{visual:{type:'money',value:5},correct:true},{visual:{type:'money',value:10}}
+      ]),
+      makeChoice('买10元的东西，应该用哪张钱', '买10元的东西，应该用哪张钱', [
+        {visual:{type:'money',value:5}},{visual:{type:'money',value:1}},{visual:{type:'money',value:10},correct:true}
+      ]),
+    ]},
+    { name: '看图列式', content: () => [
+      makeChoice(`${applesStr(3)}和${applesStr(2)}合起来，用什么算式`, '3个苹果和2个苹果合起来，用什么算式', [{label:'3+2',correct:true},{label:'3-2'},{label:'2-3'}]),
+      makeChoice(`${applesStr(5)}吃掉2个，用什么算式`, '5个苹果吃掉2个，用什么算式', [{label:'5+2'},{label:'5-2',correct:true},{label:'2-5'}]),
+    ]},
+    { name: '生活数学家', content: () => [
+      makeChoice('小明有5支笔，送给小红2支，还剩几支', '小明有5支笔，送给小红2支，还剩几支', [{label:'3支',correct:true},{label:'7支'},{label:'2支'}]),
+      makeChoice('小红有3颗糖，妈妈又给了2颗，一共几颗', '小红有3颗糖，妈妈又给了2颗，一共几颗', [{label:'5颗',correct:true},{label:'1颗'},{label:'6颗'}]),
+    ]},
+    { name: '大班数学小状元', content: () => pick([
+        ...DABAN[2].content(), ...DABAN[3].content(), ...DABAN[6].content(), ...DABAN[7].content(),
+        ...DABAN[9].content(), ...DABAN[13].content()
+      ], 10)
+    },
+    // 新增7关
+    { name: '20以内加法闯关', content: arithLevel(() => genAddPool(20, {minSum:11}), 15) },
+    { name: '20以内减法闯关', content: arithLevel(() => genSubPool(20, {minA:11}), 15) },
+    { name: '20以内综合挑战', content: arithLevel(() => genMixPool(20, {minA:11}), 15) },
+    { name: '30以内加法闯关', content: arithLevel(() => genAddPool(30, {minSum:21}), 15) },
+    { name: '30以内减法闯关', content: arithLevel(() => genSubPool(30, {minA:21}), 15) },
+    { name: '30以内综合挑战', content: arithLevel(() => genMixPool(30, {minA:21}), 15) },
+    { name: '大班算术小状元', content: arithLevel(() => genMixPool(30), 18) },
+  ];
+
+  window.KS_KG_CONTENT = { XIAOBAN, ZHONGBAN, DABAN };
+})();
+
+
+// ===== 一年级上册关卡内容（小学完整机制） =====
+(function () {
+  const { makeChoice, applesStr, randInt, arithLevel, genAddPool, genSubPool, genMixPool, shuffle, pick, makeArith } = window.KS;
+
+  // 三数连加连减（简化：a+b+c 或 a-b-c，左到右计算）
+  function make3(a, op1, b, op2, c) {
+    const v1 = op1 === '+' ? a + b : a - b;
+    const answer = op2 === '+' ? v1 + c : v1 - c;
+    const w1 = op1 === '+' ? '加' : '减';
+    const w2 = op2 === '+' ? '加' : '减';
+    return {
+      type: 'arith',
+      expression: `${a} ${op1} ${b} ${op2} ${c} = ?`,
+      answer,
+      speechText: `${a}${w1}${b}${w2}${c}等于多少`
+    };
+  }
+  function gen3Pool(max, ops) {
+    const pool = [];
+    for (let a = 0; a <= max; a++) for (let b = 0; b <= max; b++) for (let c = 0; c <= max; c++) {
+      for (const [op1, op2] of ops) {
+        const v1 = op1 === '+' ? a + b : a - b;
+        if (v1 < 0 || v1 > max) continue;
+        const ans = op2 === '+' ? v1 + c : v1 - c;
+        if (ans < 0 || ans > max) continue;
+        if (a===0 && b===0 && c===0) continue;
+        pool.push(make3(a, op1, b, op2, c));
+      }
+    }
+    return pool;
+  }
+
+  const Y1S1 = [
+    { name: '1-5的认识', content: () => [1,2,3,4,5].map(n =>
+      makeChoice(`${applesStr(n)} 这是数字几`, '这是数字几', shuffle([
+        {label:String(n),correct:true},{label:String(Math.max(1,n-1))},{label:String(Math.min(5,n+1))}
+      ]))
+    )},
+    { name: '比大小', content: () => [[3,5],[7,2],[4,4],[8,6]].map(([a,b]) =>
+      makeChoice(`${a} 和 ${b} 比，哪个符号对`, `${a}和${b}比大小，选哪个符号`, [
+        {label:'>',correct: a>b},{label:'<',correct: a<b},{label:'=',correct: a===b}
+      ])
+    )},
+    { name: '第几（序数）', content: () => [
+      makeChoice('🐰🐱🐶🐷🐭 小狗排第几', '小狗排第几', [{label:'第3个',correct:true},{label:'第2个'},{label:'第4个'}]),
+      makeChoice('🐰🐱🐶🐷🐭 从右数小猫排第几', '从右边数，小猫排第几', [{label:'第4个',correct:true},{label:'第2个'},{label:'第1个'}]),
+    ]},
+    { name: '分与合(2-5)', content: () => [
+      makeChoice('4可以分成1和几', '4可以分成1和几', [{label:'3',correct:true},{label:'2'},{label:'4'}]),
+      makeChoice('5可以分成2和几', '5可以分成2和几', [{label:'2'},{label:'3',correct:true},{label:'4'}]),
+      makeChoice('3可以分成1和几', '3可以分成1和几', [{label:'2',correct:true},{label:'3'},{label:'1'}]),
+    ]},
+    { name: '5以内加法', content: arithLevel(() => genAddPool(5), 12) },
+    { name: '5以内减法', content: arithLevel(() => genSubPool(5), 12) },
+    { name: '0的认识', content: () => [
+      makeChoice('盘子里一个苹果都没有，用数字几表示', '盘子里一个苹果都没有，用数字几表示', [{label:'0',correct:true},{label:'1'},{label:'2'}]),
+      makeChoice('3-3等于几', '3减3等于几', [{label:'0',correct:true},{label:'3'},{label:'1'}]),
+    ]},
+    { name: '6-10的认识', content: () => [6,7,8,9,10].map(n =>
+      makeChoice(`这是数字几：${n}`, '这是数字几', shuffle([
+        {label:String(n),correct:true},{label:String(n-1)},{label:String(Math.min(10,n+1))}
+      ]))
+    )},
+    { name: '6-10加减法', content: arithLevel(() => genMixPool(10, {minA:6}), 14) },
+    { name: '10以内连加连减', content: arithLevel(() => gen3Pool(10, [['+','+'],['-','-']]), 12) },
+    { name: '10以内加减混合', content: arithLevel(() => gen3Pool(10, [['+','-'],['-','+']]), 12) },
+    { name: '11-20各数的认识', content: () => shuffle(Array.from({length:10},(_,i)=>i+11)).slice(0,6).map(n =>
+      makeChoice(`这是数字几：${n}`, '这是数字几', [{label:String(n),correct:true},{label:String(n-1)},{label:String(n+1)}])
+    )},
+    { name: '20以内不进位加法', content: arithLevel(() => genAddPool(20, {noCarry:true, minSum:11}), 15) },
+    { name: '20以内不退位减法', content: arithLevel(() => genSubPool(20, {noBorrow:true, minA:11}), 15) },
+    { name: '认识钟表(整点)', content: () => [1,3,6,9,12].map(h => {
+      const q = makeChoice(`现在几点`, `现在是几点`, shuffle([
+        {label:`${h}点`,correct:true},{label:`${h===12?1:h+1}点`},{label:'12点'}
+      ]));
+      q.promptVisual = { type: 'clock', hour: h, minute: 0 };
+      return q;
+    })},
+    { name: '20以内进位加法', content: arithLevel(() => genAddPool(20, {mustCarry:true}), 15) },
+    { name: '综合复习', content: () => pick([
+        ...genMixPool(20,{minA:6}).slice(0,20)
+      ], 15)
+    },
+    // 新增9关
+    { name: '加法进阶营', content: arithLevel(() => genAddPool(20, {minA:10, minSum:11}), 16) },
+    { name: '减法进阶营', content: arithLevel(() => genSubPool(20, {minA:10}), 16) },
+    { name: '进阶综合挑战', content: arithLevel(() => genMixPool(20, {minA:10}), 18) },
+    { name: '加法再进阶', content: arithLevel(() => genAddPool(30, {minA:15, minSum:21}), 16) },
+    { name: '减法再进阶', content: arithLevel(() => genSubPool(30, {minA:20}), 16) },
+    { name: '综合再挑战', content: arithLevel(() => genMixPool(30, {minA:20}), 18) },
+    { name: '加法大师营', content: arithLevel(() => genAddPool(50, {minA:25, minSum:31}), 18) },
+    { name: '减法大师营', content: arithLevel(() => genSubPool(50, {minA:30}), 18) },
+    { name: '一年级算术小达人', content: arithLevel(() => genMixPool(50, {minA:10}), 20) },
+  ];
+
+  window.KS_Y1S1_CONTENT = Y1S1;
+})();
+
+
+// ===== 一年级下册关卡内容 =====
+(function () {
+  const { makeChoice, randInt, arithLevel, genSubPool, genTensAddPool, genTensSubPool,
+    genTwoOneAddPool, genTwoOneSubPool, shuffle, pick } = window.KS;
+
+  const Y1S2 = [
+    { name: '20以内退位减法', content: arithLevel(() => genSubPool(20, { noBorrow: false, minA: 11 }), 15) },
+    { name: '100以内数的认识', content: () => shuffle(Array.from({length:80},(_,i)=>i+20)).slice(0,7).map(n =>
+      makeChoice(`这是数字几：${n}`, '这是数字几', shuffle([
+        {label:String(n),correct:true},{label:String(n-1)},{label:String(n+2)}
+      ]))
+    )},
+    { name: '数的大小比较', content: () => Array.from({length:6},() => {
+      const a = randInt(10,99), b = randInt(10,99);
+      return makeChoice(`${a} 和 ${b} 比，哪个符号对`, `${a}和${b}比大小，选哪个符号`, [
+        {label:'>',correct:a>b},{label:'<',correct:a<b},{label:'=',correct:a===b}
+      ]);
+    })},
+    { name: '认识人民币', content: () => [
+      makeChoice('1元=多少角', '1元等于多少角', [{label:'10角',correct:true},{label:'1角'},{label:'100角'}]),
+      makeChoice('哪张是1角', '哪张是1角', [
+        {visual:{type:'money',value:1,unit:'角'},correct:true},{visual:{type:'money',value:1,unit:'元'}},{visual:{type:'money',value:1,unit:'分'}}
+      ]),
+      makeChoice('1角=多少分', '1角等于多少分', [{label:'10分',correct:true},{label:'1分'},{label:'100分'}]),
+    ]},
+    { name: '小小收银员', content: () => Array.from({length:5},() => {
+      const a = randInt(1,5), b = randInt(1,5);
+      return makeChoice(`${a}元和${b}元合起来是多少钱`, `${a}元和${b}元合起来是多少钱`, shuffle([
+        {label:`${a+b}元`,correct:true},{label:`${a+b+1}元`},{label:`${Math.max(1,a+b-1)}元`}
+      ]));
+    })},
+    { name: '整十加减法', content: arithLevel(() => [...genTensAddPool(100), ...genTensSubPool(100)], 15) },
+    { name: '两位数加减一', content: arithLevel(() => [...genTwoOneAddPool(100), ...genTwoOneSubPool(100)], 15) },
+    { name: '平面图形', content: () => [
+      makeChoice('哪个是长方形', '哪个是长方形', [
+        {visual:{type:'shape',shape:'rectangle'},correct:true},{visual:{type:'shape',shape:'square'}},{visual:{type:'shape',shape:'triangle'}}
+      ]),
+      makeChoice('哪个是正方形', '哪个是正方形', [
+        {visual:{type:'shape',shape:'rectangle'}},{visual:{type:'shape',shape:'square'},correct:true},{visual:{type:'shape',shape:'circle'}}
+      ]),
+      makeChoice('哪个是五边形', '哪个是五边形', [
+        {visual:{type:'shape',shape:'pentagon'},correct:true},{visual:{type:'shape',shape:'triangle'}},{visual:{type:'shape',shape:'square'}}
+      ]),
+      makeChoice('哪个是圆形', '哪个是圆形', [
+        {visual:{type:'shape',shape:'circle'},correct:true},{visual:{type:'shape',shape:'rectangle'}},{visual:{type:'shape',shape:'square'}}
+      ]),
+    ]},
+    { name: '找规律', content: () => [
+      makeChoice('10，20，30，（ ）', '10、20、30，空格填几', [{label:'40',correct:true},{label:'35'},{label:'50'}]),
+      makeChoice('5，10，15，（ ）', '5、10、15，空格填几(每次+5)', [{label:'25'},{label:'20',correct:true},{label:'18'}]),
+      makeChoice('🔴🔺🔴🔺（ ）下一个是什么', 'ABAB规律，下一个是什么', [{label:'🔴',correct:true},{label:'🔺'}]),
+    ]},
+    { name: '一年级下册通关', content: arithLevel(() => [...genTwoOneAddPool(100), ...genTwoOneSubPool(100), ...genTensAddPool(100)], 15) },
+  ];
+
+  window.KS_Y1S2_CONTENT = Y1S2;
+  // 每日挑战题库：100以内加减(含整十数、两位数±一位数)，对齐出题规则引擎"一下：和/差≤100"
+  window.KS_Y1S2_DAILY = () => shuffle([
+    ...genTwoOneAddPool(100), ...genTwoOneSubPool(100),
+    ...genTensAddPool(100), ...genTensSubPool(100)
+  ]);
+})();
+
+
+// ===== 二年级上下册关卡内容 =====
+(function () {
+  const { makeChoice, randInt, arithLevel, genAddPool, genSubPool, genMixPool, shuffle, pick, makeArith } = window.KS;
+
+  // 乘法（表内2-9）
+  function genMulPool(minTable, maxTable) {
+    const pool = [];
+    for (let a = minTable; a <= maxTable; a++) for (let b = 1; b <= 9; b++) {
+      pool.push({ type: 'arith', expression: `${a} × ${b} = ?`, answer: a * b, speechText: `${a}乘${b}等于多少` });
+    }
+    return pool;
+  }
+  // 除法（表内，被除数=乘积，确保整除）
+  function genDivPool(minTable, maxTable) {
+    const pool = [];
+    for (let a = minTable; a <= maxTable; a++) for (let b = 1; b <= 9; b++) {
+      const dividend = a * b;
+      pool.push({ type: 'arith', expression: `${dividend} ÷ ${a} = ?`, answer: b, speechText: `${dividend}除以${a}等于多少` });
+    }
+    return pool;
+  }
+  // 有余数除法
+  function genDivRemainderPool(max) {
+    const pool = [];
+    for (let divisor = 2; divisor <= 9; divisor++) {
+      for (let quotient = 1; quotient <= 9; quotient++) {
+        for (let r = 1; r < divisor; r++) {
+          const dividend = divisor * quotient + r;
+          if (dividend > max) continue;
+          pool.push({ type: 'arith', expression: `${dividend} ÷ ${divisor} = ? ...余?`, answer: quotient,
+            speechText: `${dividend}除以${divisor}商几`, note: `余${r}` });
+        }
+      }
+    }
+    return pool;
+  }
+
+  const Y2S1 = [
+    { name: '测量长度', content: () => [
+      makeChoice('测量铅笔长度用什么单位', '测量铅笔长度用什么单位比较合适', [{label:'厘米',correct:true},{label:'米'},{label:'千克'}]),
+      makeChoice('测量教室长度用什么单位', '测量教室长度用什么单位比较合适', [{label:'厘米'},{label:'米',correct:true},{label:'克'}]),
+      makeChoice('1米=多少厘米', '1米等于多少厘米', [{label:'100厘米',correct:true},{label:'10厘米'},{label:'1000厘米'}]),
+    ]},
+    { name: '进位加法', content: arithLevel(() => genAddPool(100, {minA:10, mustCarry:true}), 16) },
+    { name: '退位减法', content: arithLevel(() => genSubPool(100, {minA:10}).filter(q=>{
+        const [a,b] = q.expression.match(/\d+/g).map(Number); return (a%10) < (b%10);
+      }), 16) },
+    { name: '加减混合', content: arithLevel(() => genMixPool(100, {minA:10}), 16) },
+    { name: '认识角', content: () => [
+      makeChoice('哪个是直角', '哪个是直角', [{label:'⊾',correct:true},{label:'∠'},{label:'〜'}]),
+      makeChoice('角有几条边', '角有几条边', [{label:'1条'},{label:'2条',correct:true},{label:'3条'}]),
+    ]},
+    { name: '2-6乘法口诀', content: arithLevel(() => genMulPool(2,6), 16) },
+    { name: '7-9乘法口诀', content: arithLevel(() => genMulPool(7,9), 16) },
+    { name: '乘加乘减', content: arithLevel(() => {
+        const pool = [];
+        for (let a=2;a<=9;a++) for (let b=1;b<=9;b++) for (const op of ['+','-']) {
+          const mul = a*b; const c = randInt(1,5);
+          const ans = op==='+' ? mul+c : mul-c;
+          if (ans < 0) continue;
+          pool.push({type:'arith', expression:`${a} × ${b} ${op} ${c} = ?`, answer:ans, speechText:`${a}乘${b}${op==='+'?'加':'减'}${c}等于多少`});
+        }
+        return pool;
+      }, 14) },
+    { name: '从不同方向看', content: () => [
+      makeChoice('从正面看杯子是什么形状', '从正面看杯子大概是什么形状', [{label:'长方形',correct:true},{label:'三角形'}]),
+      makeChoice('从上面看球是什么形状', '从上面看球是什么形状', [{label:'圆形',correct:true},{label:'方形'}]),
+    ]},
+    { name: '几时几分', content: () => [15,30,45].flatMap(min => [3,6,9].map(h =>
+      makeChoice(`时针接近${h}分针指${min===15?3:min===30?6:9}，是几时${min}分`, `大约是${h}时${min}分`, [
+        {label:`${h}时${min}分`,correct:true},{label:`${h+1}时${min}分`},{label:`${h}时`}
+      ])
+    )).slice(0,6)},
+    { name: '二年级上册通关', content: arithLevel(() => [...genMulPool(2,9), ...genMixPool(100,{minA:10})], 16) },
+  ];
+
+  const Y2S2 = [
+    { name: '统计小能手', content: () => [
+      makeChoice('🍎🍎🍎🍌🍌 苹果比香蕉多几个', '苹果比香蕉多几个', [{label:'1个',correct:true},{label:'2个'},{label:'3个'}]),
+      makeChoice('🍎🍎🍌🍌🍌 香蕉比苹果多几个', '香蕉比苹果多几个', [{label:'0个'},{label:'1个',correct:true},{label:'2个'}]),
+    ]},
+    { name: '2-6除法', content: arithLevel(() => genDivPool(2,6), 16) },
+    { name: '7-9除法', content: arithLevel(() => genDivPool(7,9), 16) },
+    { name: '两步混合运算', content: arithLevel(() => {
+        const pool = [];
+        for (let a=1;a<=9;a++) for (let b=1;b<=9;b++) for (let c=1;c<=9;c++) {
+          const mul = a*b; const ans = mul + c;
+          if (ans > 100) continue;
+          pool.push({type:'arith', expression:`${a} × ${b} + ${c} = ?`, answer:ans, speechText:`${a}乘${b}加${c}等于多少`});
+        }
+        return pool;
+      }, 14) },
+    { name: '有余数除法', content: arithLevel(() => genDivRemainderPool(80), 14) },
+    { name: '万以内数的认识', content: () => [1200,3500,6800,9999,4321].map(n =>
+      makeChoice(`这是数字几：${n}`, `这是数字${n}`, [{label:String(n),correct:true},{label:String(n-100)},{label:String(n+100)}])
+    )},
+    { name: '万以内数的读写', content: () => [
+      makeChoice('3005中间的0读不读', '3005这个数中间的0要不要读出来', [{label:'要读',correct:true},{label:'不读'}]),
+      makeChoice('哪个数更大：2999和3000', '2999和3000哪个更大', [{label:'2999'},{label:'3000',correct:true}]),
+    ]},
+    { name: '万以内加减', content: arithLevel(() => {
+        const pool = [];
+        for (let i=0;i<400;i++){
+          const a = randInt(100,3000), b = randInt(100,3000);
+          const op = Math.random()>0.5?'+':'-';
+          const x=Math.max(a,b), y=Math.min(a,b);
+          const ans = op==='+' ? a+b : x-y;
+          if (ans>9999) continue;
+          pool.push(op==='+' ? makeArith(a,'+',b,ans) : makeArith(x,'-',y,ans));
+        }
+        return pool;
+      }, 14) },
+    { name: '图形运动', content: () => [
+      makeChoice('把图形往右移叫什么', '图形往右移动叫什么', [{label:'平移',correct:true},{label:'旋转'},{label:'对称'}]),
+      makeChoice('图形绕一个点转叫什么', '图形绕一个点转叫什么', [{label:'平移'},{label:'旋转',correct:true},{label:'对称'}]),
+      makeChoice('蝴蝶两边一样叫什么', '蝴蝶左右两边一样，这叫什么', [{label:'轴对称',correct:true},{label:'平移'}]),
+    ]},
+    { name: '克和千克', content: () => [
+      makeChoice('1千克=多少克', '1千克等于多少克', [{label:'1000克',correct:true},{label:'100克'},{label:'10克'}]),
+      makeChoice('一个苹果大约多重', '一个苹果大约多重', [{label:'200克',correct:true},{label:'200千克'}]),
+      makeChoice('一袋大米大约多重', '一袋大米大约多重', [{label:'5克'},{label:'5千克',correct:true}]),
+    ]},
+    { name: '二年级下册通关', content: arithLevel(() => [...genDivPool(2,9)], 16) },
+  ];
+
+  window.KS_Y2S1_CONTENT = Y2S1;
+  window.KS_Y2S2_CONTENT = Y2S2;
+  // 每日挑战题库：对齐出题规则引擎"二上：和/差≤100 + 2-9口诀"、"二下：表内除法"
+  window.KS_Y2S1_DAILY = () => shuffle([...genMulPool(2,9), ...genMixPool(100, {minA:10})]);
+  window.KS_Y2S2_DAILY = () => shuffle([...genDivPool(2,9), ...genDivRemainderPool(80)]);
+})();
+
+
+// ===== 三年级上下册关卡内容 =====
+(function () {
+  const { makeChoice, randInt, arithLevel, genAddPool, genSubPool, genMixPool, shuffle, pick, makeArith } = window.KS;
+
+  function genBigAddPool(min, max) {
+    const pool = [];
+    for (let i = 0; i < 400; i++) {
+      const a = randInt(min, max), b = randInt(min, max);
+      const s = a + b;
+      if (s <= 9999) pool.push(makeArith(a, '+', b, s));
+    }
+    return pool;
+  }
+  function genBigSubPool(min, max) {
+    const pool = [];
+    for (let i = 0; i < 400; i++) {
+      const a = randInt(min, max), b = randInt(min, max);
+      const x = Math.max(a, b), y = Math.min(a, b);
+      pool.push(makeArith(x, '-', y, x - y));
+    }
+    return pool;
+  }
+  function genMul1Pool(min, max) {
+    const pool = [];
+    for (let a = min; a <= max; a++) for (let b = 1; b <= 9; b++) {
+      pool.push({ type: 'arith', expression: `${a} × ${b} = ?`, answer: a * b, speechText: `${a}乘${b}等于多少` });
+    }
+    return pool;
+  }
+  function genDiv1Pool(minQuot, maxQuot, exact = true) {
+    const pool = [];
+    for (let divisor = 2; divisor <= 9; divisor++) {
+      for (let q = minQuot; q <= maxQuot; q++) {
+        const dividend = divisor * q;
+        if (dividend > 999) continue;
+        pool.push({ type: 'arith', expression: `${dividend} ÷ ${divisor} = ?`, answer: q, speechText: `${dividend}除以${divisor}等于多少` });
+      }
+    }
+    return pool;
+  }
+  function genTwoTwoMulPool() {
+    const pool = [];
+    for (let i = 0; i < 300; i++) {
+      const a = randInt(10, 99), b = randInt(10, 99);
+      if (a * b > 9999) continue;
+      pool.push(makeArith(a, '×', b, a * b));
+    }
+    return pool.map(q => ({ ...q, expression: q.expression.replace('×', '×') }));
+  }
+
+  const Y3S1 = [
+    { name: '时分秒', content: () => [
+      makeChoice('1分=多少秒', '1分等于多少秒', [{label:'60秒',correct:true},{label:'100秒'},{label:'10秒'}]),
+      makeChoice('1时=多少分', '1时等于多少分', [{label:'60分',correct:true},{label:'100分'},{label:'12分'}]),
+      makeChoice('半小时是多少分钟', '半小时是多少分钟', [{label:'30分钟',correct:true},{label:'15分钟'}]),
+    ]},
+    { name: '万以内加法(二)', content: arithLevel(() => genBigAddPool(1000, 8000), 15) },
+    { name: '万以内减法(二)', content: arithLevel(() => genBigSubPool(1000, 8000), 15) },
+    { name: '测量单位', content: () => [
+      makeChoice('测量一根头发的粗细用什么单位', '测量一根头发的粗细用什么单位', [{label:'毫米',correct:true},{label:'千米'},{label:'吨'}]),
+      makeChoice('测量两城市间距离用什么单位', '测量两个城市之间的距离用什么单位', [{label:'厘米'},{label:'千米',correct:true},{label:'克'}]),
+      makeChoice('1千米=多少米', '1千米等于多少米', [{label:'1000米',correct:true},{label:'100米'}]),
+      makeChoice('大卡车载重用什么单位', '大卡车的载重量用什么单位比较合适', [{label:'克'},{label:'吨',correct:true}]),
+    ]},
+    { name: '倍的认识', content: () => Array.from({length:5},() => {
+      const b = randInt(2,5), times = randInt(2,4), a = b*times;
+      return makeChoice(`${a}是${b}的几倍`, `${a}是${b}的几倍`, shuffle([
+        {label:`${times}倍`,correct:true},{label:`${times+1}倍`},{label:`${Math.max(1,times-1)}倍`}
+      ]));
+    })},
+    { name: '多位数乘一位数', content: arithLevel(() => genMul1Pool(100, 300), 15) },
+    { name: '进位乘法', content: arithLevel(() => genMul1Pool(300, 600), 15) },
+    { name: '数字编码', content: () => [
+      makeChoice('身份证号里前面的数字表示什么', '身份证号码前面的数字一般表示什么', [{label:'地区',correct:true},{label:'姓名'}]),
+      makeChoice('车牌号里的字母通常代表什么', '车牌号里的字母通常代表什么', [{label:'省份/地区',correct:true},{label:'颜色'}]),
+    ]},
+    { name: '长方形和正方形', content: () => [
+      makeChoice('长方形对边怎么样', '长方形的对边怎么样', [{label:'相等',correct:true},{label:'不相等'}]),
+      makeChoice('正方形四条边怎么样', '正方形的四条边怎么样', [{label:'都相等',correct:true},{label:'不都相等'}]),
+      makeChoice('长5宽3的长方形周长是多少', '长5宽3的长方形周长是多少', [{label:'16',correct:true},{label:'15'},{label:'8'}]),
+    ]},
+    { name: '认识分数', content: () => [
+      (() => { const q = makeChoice('图中涂色部分是几分之几', '图中涂色部分是几分之几', [{label:'1/4',correct:true},{label:'4/1'},{label:'1/2'}]); q.promptVisual = {type:'fraction',num:1,den:4}; return q; })(),
+      (() => { const q = makeChoice('图中涂色部分是几分之几', '图中涂色部分是几分之几', [{label:'1/2',correct:true},{label:'2/1'},{label:'1/3'}]); q.promptVisual = {type:'fraction',num:1,den:2}; return q; })(),
+      (() => { const q = makeChoice('图中涂色部分是几分之几', '图中涂色部分是几分之几', [{label:'2/3',correct:true},{label:'3/2'},{label:'1/3'}]); q.promptVisual = {type:'fraction',num:2,den:3}; return q; })(),
+      makeChoice('哪个分数更大：1/2还是1/4', '1/2和1/4哪个更大', [{label:'1/2',correct:true},{label:'1/4'}]),
+    ]},
+    { name: '分数加减', content: () => [
+      (() => { const q = makeChoice('1/5 + 2/5 = ?', '5分之1加5分之2等于多少', [{label:'3/5',correct:true},{label:'3/10'},{label:'1/5'}]); q.promptVisual = {type:'fraction',num:3,den:5}; return q; })(),
+      makeChoice('3/7 - 1/7 = ?', '7分之3减7分之1等于多少', [{label:'2/7',correct:true},{label:'2/14'}]),
+      makeChoice('2/9 + 3/9 = ?', '9分之2加9分之3等于多少', [{label:'5/9',correct:true},{label:'5/18'}]),
+    ]},
+    { name: '三年级上册通关', content: arithLevel(() => [...genMul1Pool(100,500), ...genBigAddPool(1000,8000), ...genBigSubPool(1000,8000)], 16) },
+  ];
+
+  const Y3S2 = [
+    { name: '位置与方向', content: () => [
+      makeChoice('太阳升起的方向是', '太阳升起的方向是哪边', [{label:'东',correct:true},{label:'西'},{label:'南'}]),
+      makeChoice('地图上通常上面是哪个方向', '地图上通常上面是哪个方向', [{label:'北',correct:true},{label:'南'}]),
+      makeChoice('东的对面是哪个方向', '东的对面是哪个方向', [{label:'西',correct:true},{label:'南'}]),
+    ]},
+    { name: '除数是一位数', content: arithLevel(() => genDiv1Pool(10, 99), 16) },
+    { name: '商的秘密', content: arithLevel(() => {
+        const pool = [];
+        for (let divisor=2;divisor<=9;divisor++) for (let tens=1;tens<=9;tens++) {
+          const dividend = divisor*tens*10;
+          if (dividend>999) continue;
+          pool.push({type:'arith', expression:`${dividend} ÷ ${divisor} = ?`, answer:tens*10, speechText:`${dividend}除以${divisor}等于多少`});
+        }
+        return pool;
+      }, 14) },
+    { name: '复式统计表', content: () => [
+      makeChoice('复式统计表能同时比较几组数据', '复式统计表能同时比较几组数据', [{label:'两组或以上',correct:true},{label:'只能一组'}]),
+      makeChoice('统计表里表头一般写什么', '统计表里的表头一般写什么', [{label:'项目名称',correct:true},{label:'颜色'}]),
+    ]},
+    { name: '两位数乘两位数', content: arithLevel(() => genTwoTwoMulPool(), 14) },
+    { name: '面积单位', content: () => [
+      makeChoice('测量教室地面用什么面积单位', '测量教室地面面积用什么单位比较合适', [{label:'平方米',correct:true},{label:'平方千米'}]),
+      makeChoice('1平方米=多少平方分米', '1平方米等于多少平方分米', [{label:'100',correct:true},{label:'10'}]),
+    ]},
+    { name: '面积计算', content: () => Array.from({length:6},() => {
+      const l = randInt(3,9), w = randInt(2,8);
+      return makeChoice(`长${l}宽${w}的长方形面积是多少`, `长${l}宽${w}的长方形面积是多少`, shuffle([
+        {label:String(l*w),correct:true},{label:String(l*w+w)},{label:String((l+w)*2)}
+      ]));
+    })},
+    { name: '年月日', content: () => [
+      makeChoice('一年有多少个月', '一年有多少个月', [{label:'12个月',correct:true},{label:'10个月'}]),
+      makeChoice('闰年二月有多少天', '闰年二月有多少天', [{label:'29天',correct:true},{label:'28天'}]),
+      makeChoice('平年二月有多少天', '平年二月有多少天', [{label:'28天',correct:true},{label:'29天'}]),
+    ]},
+    { name: '24时计时法', content: () => [
+      (() => { const q = makeChoice('这个时间用24时计时法怎么表示（下午）', '下午3点用24时计时法是几时', [{label:'15时',correct:true},{label:'3时'}]); q.promptVisual = {type:'clock',hour:3,minute:0}; return q; })(),
+      (() => { const q = makeChoice('这个时间用24时计时法怎么表示（晚上）', '晚上8点用24时计时法是几时', [{label:'20时',correct:true},{label:'8时'}]); q.promptVisual = {type:'clock',hour:8,minute:0}; return q; })(),
+    ]},
+    { name: '认识小数', content: () => [
+      makeChoice('0.5读作什么', '0.5读作什么', [{label:'零点五',correct:true},{label:'五'}]),
+      makeChoice('哪个更大：0.7还是0.4', '0.7和0.4哪个更大', [{label:'0.7',correct:true},{label:'0.4'}]),
+      makeChoice('1元3角写成小数是多少元', '1元3角写成小数是多少元', [{label:'1.3元',correct:true},{label:'0.13元'}]),
+    ]},
+    { name: '小数加减', content: () => [
+      makeChoice('0.3 + 0.4 = ?', '零点三加零点四等于多少', [{label:'0.7',correct:true},{label:'0.34'}]),
+      makeChoice('0.8 - 0.5 = ?', '零点八减零点五等于多少', [{label:'0.3',correct:true},{label:'0.13'}]),
+      makeChoice('1.2 + 0.3 = ?', '一点二加零点三等于多少', [{label:'1.5',correct:true},{label:'1.23'}]),
+    ]},
+    { name: '搭配问题', content: () => [
+      makeChoice('2件上衣3条裤子，一共几种穿法', '2件上衣3条裤子搭配，一共几种穿法', [{label:'6种',correct:true},{label:'5种'}]),
+      makeChoice('3种饮料2种零食，一共几种搭配', '3种饮料2种零食搭配，一共几种', [{label:'6种',correct:true},{label:'5种'}]),
+    ]},
+    { name: '三年级下册通关', content: arithLevel(() => [...genDiv1Pool(10,99), ...genTwoTwoMulPool()], 16) },
+  ];
+
+  window.KS_Y3S1_CONTENT = Y3S1;
+  window.KS_Y3S2_CONTENT = Y3S2;
+  // 每日挑战题库：对齐出题规则引擎"三上：和/差≤10000 + 多位数×一位数"、"三下：两位数×两位数 + 除数是一位数"
+  window.KS_Y3S1_DAILY = () => shuffle([...genMul1Pool(100,600), ...genBigAddPool(1000,8000), ...genBigSubPool(1000,8000)]);
+  window.KS_Y3S2_DAILY = () => shuffle([...genDiv1Pool(10,99), ...genTwoTwoMulPool()]);
+})();
+
+
+// ===== 语音解锁（修复移动端语音无法播放的核心问题） =====
+// 原理：iOS Safari等移动浏览器要求语音合成必须由"用户直接点击"同步触发才允许播放，
+// 通过setTimeout等延迟触发的语音会被静默拦截。这里在用户进入App后的第一次点击时，
+// 同步播放一条几乎无声的语音来"解锁"，之后整个会话里延迟触发的语音也能正常播放。
+(function () {
+  let unlocked = false;
+  function unlockSpeech() {
+    if (unlocked) return;
+    unlocked = true;
+    if ('speechSynthesis' in window) {
+      try {
+        const u = new SpeechSynthesisUtterance(' ');
+        u.volume = 0.01;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+  }
+  document.addEventListener('click', unlockSpeech, { once: true, capture: true });
+  document.addEventListener('touchend', unlockSpeech, { once: true, capture: true });
+})();
+
+class SpeechQueue {
+  constructor() { this.queue = []; this.speaking = false; this.currentUtteranceId = 0; }
+  stopAll() {
+    if ('speechSynthesis' in window) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+    this.queue = []; this.speaking = false; this.currentUtteranceId++;
+  }
+  enqueue(text, { rate = 1, pitch = 1, onEnd = null } = {}) {
+    const id = this.currentUtteranceId;
+    this.queue.push({ text, rate, pitch, onEnd, id });
+    this._processNext();
+  }
+  speakImmediate(text, opts = {}) { this.stopAll(); this.enqueue(text, opts); }
+  _processNext() {
+    if (this.speaking) return;
+    const item = this.queue.shift();
+    if (!item) return;
+    this.speaking = true;
+    const myId = item.id;
+    if (!('speechSynthesis' in window)) {
+      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext(); return;
+    }
+    let utter;
+    try {
+      utter = new SpeechSynthesisUtterance(item.text);
+      utter.lang = 'zh-CN'; utter.rate = item.rate; utter.pitch = item.pitch;
+    } catch (e) {
+      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext(); return;
+    }
+    const finish = () => {
+      if (myId !== this.currentUtteranceId) return;
+      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext();
+    };
+    utter.onend = finish; utter.onerror = finish;
+    try { window.speechSynthesis.speak(utter); } catch (e) { finish(); }
+  }
+}
+window.speechQueue = new SpeechQueue();
+
+const ENCOURAGE_WORDS = ['太厉害了', '游刃有余', '无人能挡', '横扫千军', '神机妙算', '百战百胜'];
+function randomEncourage() { return ENCOURAGE_WORDS[Math.floor(Math.random() * ENCOURAGE_WORDS.length)]; }
+
+const COMBO_TITLES = [
+  { threshold: 18, name: 'MVP连胜王', icon: '👑', cls: 'badge-lv5', rate: 1.3, pitch: 1.4 },
+  { threshold: 15, name: '收割战神', icon: '🏆', cls: 'badge-lv4', rate: 1.25, pitch: 1.3 },
+  { threshold: 10, name: '常胜将军', icon: '💎', cls: 'badge-lv3', rate: 1.15, pitch: 1.2 },
+  { threshold: 5,  name: '五连绝世', icon: '⚡', cls: 'badge-lv2', rate: 1.1,  pitch: 1.1 },
+  { threshold: 3,  name: '三连决胜', icon: '🔥', cls: 'badge-lv1', rate: 1.0,  pitch: 1.0 },
+];
+// 题量较少的关卡按比例缩放连击阈值（如题量只有10题左右）
+function scaledComboTitles(questionCount) {
+  if (questionCount >= 18) return COMBO_TITLES;
+  const ratio = questionCount / 20;
+  return COMBO_TITLES.map(t => ({ ...t, threshold: Math.max(2, Math.round(t.threshold * ratio)) }))
+    .filter((t, i, arr) => arr.findIndex(x => x.threshold === t.threshold) === i)
+    .sort((a,b) => b.threshold - a.threshold);
+}
+
+function checkComboTitle(streak, announcedMaxThreshold, titles) {
+  for (const t of titles) { if (streak >= t.threshold && t.threshold > announcedMaxThreshold) return t; }
+  return null;
+}
+
+function computeSettlementTitles({ firstRoundCorrect, firstRoundWrong, avgSeconds, maxComboReached }) {
+  const total = firstRoundCorrect + firstRoundWrong;
+  const accuracy = total > 0 ? firstRoundCorrect / total : 0;
+  const titles = [];
+  const isPerfect = firstRoundWrong === 0;
+  const isUltimate = maxComboReached >= 10 && isPerfect && avgSeconds < 15;
+  if (isUltimate) {
+    titles.push({ name: '绝世无双王者', icon: '👑', cls: 'badge-lv5', desc: '速度、准确率、连答全部拉满，获得终极绝世无双王者' });
+  } else {
+    if (isPerfect) titles.push({ name: '最强王者', icon: '⭐', cls: 'badge-lv4', desc: '整关零失误完美通关，获得最强王者' });
+    else if (accuracy >= 0.85) titles.push({ name: '暴击王者', icon: '💥', cls: 'badge-lv3', desc: '计算稳定性拉满，获得暴击王者' });
+    if (avgSeconds < 30) titles.push({ name: '闪电王者', icon: '⚡', cls: 'badge-lv3', desc: '看题秒出答案，获得闪电王者' });
+    else if (avgSeconds < 40) titles.push({ name: '疾行王者', icon: '💨', cls: 'badge-lv2', desc: '答题速度远超标准，获得疾行王者' });
+  }
+  return titles;
+}
+window.KS_TITLES = { randomEncourage, COMBO_TITLES, scaledComboTitles, checkComboTitle, computeSettlementTitles };
+
+
+// ===== 阶段与关卡总表 =====
+const STAGES = [
+  { id: 'xiaoban', name: '小班', sub: '3-4岁', mode: 'kg', icon: '🌱', levels: window.KS_KG_CONTENT.XIAOBAN },
+  { id: 'zhongban', name: '中班', sub: '4-5岁', mode: 'kg', icon: '🌼', levels: window.KS_KG_CONTENT.ZHONGBAN },
+  { id: 'daban', name: '大班', sub: '5-6岁', mode: 'kg', icon: '🌟', levels: window.KS_KG_CONTENT.DABAN },
+  { id: 'y1s1', name: '一年级上册', sub: '6-7岁', mode: 'elem', icon: '📘', levels: window.KS_Y1S1_CONTENT },
+  { id: 'y1s2', name: '一年级下册', sub: '6-7岁', mode: 'elem', icon: '📗', levels: window.KS_Y1S2_CONTENT },
+  { id: 'y2s1', name: '二年级上册', sub: '7-8岁', mode: 'elem', icon: '📙', levels: window.KS_Y2S1_CONTENT },
+  { id: 'y2s2', name: '二年级下册', sub: '7-8岁', mode: 'elem', icon: '📕', levels: window.KS_Y2S2_CONTENT },
+  { id: 'y3s1', name: '三年级上册', sub: '8-9岁', mode: 'elem', icon: '📔', levels: window.KS_Y3S1_CONTENT },
+  { id: 'y3s2', name: '三年级下册', sub: '8-9岁', mode: 'elem', icon: '📒', levels: window.KS_Y3S2_CONTENT },
+];
+function getStage(id) { return STAGES.find(s => s.id === id); }
+
+// ===== 每日挑战题库（按出题规则引擎对齐各学段范围） =====
+const DAILY_POOL_FNS = {
+  zhongban: () => window.KS.genMixPool(10),
+  daban: () => window.KS.genMixPool(30),
+  y1s1: () => window.KS.genMixPool(50, { minA: 10 }),
+  y1s2: () => window.KS_Y1S2_DAILY(),
+  y2s1: () => window.KS_Y2S1_DAILY(),
+  y2s2: () => window.KS_Y2S2_DAILY(),
+  y3s1: () => window.KS_Y3S1_DAILY(),
+  y3s2: () => window.KS_Y3S2_DAILY(),
+};
+
+// ===== 进度存储 =====
+function loadProgress() { try { return JSON.parse(localStorage.getItem('ks_progress') || '{}'); } catch (e) { return {}; } }
+function saveProgress(p) { localStorage.setItem('ks_progress', JSON.stringify(p)); }
+function getStageProgress(stageId) {
+  const p = loadProgress();
+  if (!p[stageId]) p[stageId] = { maxUnlocked: 1, stars: {}, completed: [] };
+  return p[stageId];
+}
+function saveStageProgress(stageId, sp) {
+  const p = loadProgress(); p[stageId] = sp; saveProgress(p);
+}
+
+// ===== 打卡 =====
+function markDailyCheckin() {
+  const p = loadProgress();
+  const today = new Date().toISOString().slice(0, 10);
+  p.checkin = p.checkin || { lastDate: null, streak: 0 };
+  if (p.checkin.lastDate === today) { saveProgress(p); return; }
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  p.checkin.streak = (p.checkin.lastDate === yesterday) ? p.checkin.streak + 1 : 1;
+  p.checkin.lastDate = today;
+  saveProgress(p);
+}
+function getStreak() { const p = loadProgress(); return p.checkin ? p.checkin.streak : 0; }
+
+// ===== 每日挑战/每日练习：记录与题库组装 =====
+function todayStr() { return new Date().toISOString().slice(0, 10); }
+function loadDailyRecord(stageId) {
+  const p = loadProgress();
+  p.daily = p.daily || {};
+  return p.daily[stageId + '_' + todayStr()] || null;
+}
+function saveDailyRecord(stageId, rec) {
+  const p = loadProgress();
+  p.daily = p.daily || {};
+  p.daily[stageId + '_' + todayStr()] = rec;
+  saveProgress(p);
+}
+function buildDailyQuestions(stageId) {
+  const st = getStage(stageId);
+  const { shuffle, pick } = window.KS;
+  const sp = getStageProgress(stageId);
+  const unlockedLevels = st.levels.slice(0, Math.max(1, sp.maxUnlocked));
+  let concept = [];
+  unlockedLevels.forEach(lv => { try { concept = concept.concat(lv.content().filter(q => q.type === 'choice')); } catch (e) {} });
+
+  if (st.mode === 'kg') {
+    let arithFn = DAILY_POOL_FNS[stageId];
+    let arith = arithFn ? arithFn() : [];
+    const pool = shuffle([...concept, ...arith]);
+    return pick(pool, Math.min(5, Math.max(3, pool.length)));
+  } else {
+    const arithFn = DAILY_POOL_FNS[stageId];
+    const arith = arithFn ? arithFn() : [];
+    const arithSample = pick(arith, 12);
+    const conceptSample = pick(concept, 3);
+    return shuffle([...arithSample, ...conceptSample]);
+  }
+}
+
+// ===== 屏幕切换 =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+function goHome() {
+  window.speechQueue.stopAll();
+  document.getElementById('streak-display').textContent = getStreak() > 0 ? `🔥连续学习${getStreak()}天` : '';
+  renderStageList();
+  showScreen('screen-home');
+}
+function renderStageList() {
+  const wrap = document.getElementById('stage-list');
+  wrap.innerHTML = '';
+  STAGES.forEach(st => {
+    const div = document.createElement('div');
+    div.className = 'stage-card' + (st.comingSoon ? ' soon' : '') + (st.mode === 'kg' ? ' mode-kg' : ' mode-elem');
+    const count = st.comingSoon ? st.plannedCount : st.levels.length;
+    const sp = st.comingSoon ? null : getStageProgress(st.id);
+    const progressText = sp ? `已通关${sp.completed.length}/${count}` : '';
+    div.innerHTML = `<div class="stage-icon">${st.icon}</div>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-sub">${st.sub} · ${count}关${st.comingSoon ? '（敬请期待）' : ''}</div>
+      <div class="stage-progress-mini">${progressText}</div>`;
+    if (!st.comingSoon) div.onclick = () => goToMap(st.id);
+    wrap.appendChild(div);
+  });
+}
+
+// ===== 地图页 =====
+let currentStageId = null;
+function goToMap(stageId) {
+  window.speechQueue.stopAll();
+  currentStageId = stageId;
+  const st = getStage(stageId);
+  document.getElementById('map-stage-title').textContent = st.name + ' · 关卡地图';
+  const sp = getStageProgress(stageId);
+  const list = document.getElementById('map-list');
+  list.innerHTML = '';
+
+  // 每日任务卡片（置顶）
+  const dailyRec = loadDailyRecord(stageId);
+  const dailyCard = document.createElement('div');
+  dailyCard.className = 'daily-card ' + (st.mode === 'kg' ? 'daily-kg' : 'daily-elem');
+  if (dailyRec) {
+    if (st.mode === 'kg') {
+      dailyCard.innerHTML = `<div class="daily-title">📝 今日练习</div>
+        <div class="daily-status">✅ 今天已经完成啦，获得 ${'★'.repeat(dailyRec.stars)}${'☆'.repeat(3-dailyRec.stars)}</div>`;
+    } else {
+      dailyCard.innerHTML = `<div class="daily-title">🏆 每日挑战</div>
+        <div class="daily-status">✅ 今日已完成 · 正确率${dailyRec.accuracy}% · 用时${dailyRec.timeText}</div>`;
+    }
+  } else {
+    if (st.mode === 'kg') {
+      dailyCard.innerHTML = `<div class="daily-title">📝 今日练习</div><div class="daily-status">点击开始，今天的练习还没做哦</div>`;
+    } else {
+      dailyCard.innerHTML = `<div class="daily-title">🏆 每日挑战</div><div class="daily-status">每天限挑战1次，点击开始</div>`;
+    }
+    dailyCard.onclick = () => startDailyChallenge(stageId);
+  }
+  list.appendChild(dailyCard);
+
+  // 关卡进度概览条
+  const doneCount = sp.completed.length;
+  const progressWrap = document.createElement('div');
+  progressWrap.className = 'progress-wrap';
+  progressWrap.innerHTML = `<div class="progress-text">已通关 ${doneCount} / ${st.levels.length} 关</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${Math.round(doneCount/st.levels.length*100)}%"></div></div>`;
+  list.appendChild(progressWrap);
+
+  st.levels.forEach((lv, idx) => {
+    const num = idx + 1;
+    const isDone = sp.completed.includes(num);
+    const isLocked = num > sp.maxUnlocked;
+    const isCurrent = num === sp.maxUnlocked && !isDone;
+    const stars = sp.stars[num] || 0;
+    const div = document.createElement('div');
+    div.className = 'level-node ' + (isLocked ? 'locked' : isCurrent ? 'current' : '');
+    const badgeContent = isDone ? '⭐' : isLocked ? '🔒' : num;
+    const starDisplay = (st.mode === 'kg' && isDone) ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '';
+    div.innerHTML = `
+      <div class="level-badge ${isDone ? 'done' : isLocked ? 'locked' : 'current'}">${badgeContent}</div>
+      <div class="level-info">
+        <div class="level-info-name">第${num}关 · ${lv.name}</div>
+        <div class="level-info-sub">${isLocked ? '完成前一关解锁' : isDone ? ('已通关 ' + starDisplay) : '当前可挑战'}</div>
+      </div>`;
+    if (!isLocked) div.onclick = () => startLevel(stageId, num);
+    list.appendChild(div);
+  });
+  showScreen('screen-map');
+}
+function goToCurrentMap() { goToMap(currentStageId); }
+
+// ===== 每日挑战/练习启动 =====
+function startDailyChallenge(stageId) {
+  window.speechQueue.stopAll();
+  const st = getStage(stageId);
+  const questions = buildDailyQuestions(stageId);
+  const mode = st.mode;
+  rt = {
+    stageId, levelNum: null, mode, questions,
+    phase: 'first', index: 0,
+    correctCount: 0, wrongCount: 0, wrongQueue: [], retryIndex: 0, retryFailed: false,
+    comboStreak: 0, announcedMaxThreshold: 0, overallBestThreshold: 0, maxComboReached: 0,
+    currentInput: '', selectedChoice: null,
+    startTime: Date.now(), questionStartTime: Date.now(), questionTimes: [],
+    remainingSec: mode === 'elem' ? (questions.length <= 10 ? TIME_LIMIT.short : TIME_LIMIT.long) : 0,
+    comboTitles: window.KS_TITLES.scaledComboTitles(questions.length),
+    isDaily: true,
+  };
+  document.getElementById('level-title').textContent = (mode === 'kg' ? '📝 今日练习' : '🏆 每日挑战') + ' · ' + st.name;
+  document.body.classList.toggle('kg-mode', mode === 'kg');
+  document.getElementById('elem-hud').style.display = mode === 'elem' ? 'flex' : 'none';
+  document.getElementById('kg-hud').style.display = mode === 'kg' ? 'flex' : 'none';
+  document.getElementById('back-btn-answer').onclick = mode === 'elem' ? confirmExit : () => { clearInterval(timerHandle); goToCurrentMap(); };
+  showScreen('screen-answer');
+  if (mode === 'elem') startTimer(); else document.getElementById('timer').textContent = '';
+  renderQuestion();
+}
+
+// ===== 答题运行时状态 =====
+let rt = null; // runtime state
+let timerHandle = null;
+const TIME_LIMIT = { short: 300, long: 600 };
+
+function startLevel(stageId, levelNum) {
+  window.speechQueue.stopAll();
+  const st = getStage(stageId);
+  const lvDef = st.levels[levelNum - 1];
+  const questions = lvDef.content();
+  const mode = st.mode;
+  rt = {
+    stageId, levelNum, mode, questions,
+    phase: 'first', index: 0,
+    correctCount: 0, wrongCount: 0, wrongQueue: [], retryIndex: 0, retryFailed: false,
+    comboStreak: 0, announcedMaxThreshold: 0, overallBestThreshold: 0, maxComboReached: 0,
+    currentInput: '', selectedChoice: null,
+    startTime: Date.now(), questionStartTime: Date.now(), questionTimes: [],
+    remainingSec: questions.length <= 12 ? TIME_LIMIT.short : TIME_LIMIT.long,
+    comboTitles: window.KS_TITLES.scaledComboTitles(questions.length),
+  };
+  document.getElementById('level-title').textContent = `${st.name}·第${levelNum}关 ${lvDef.name}`;
+  document.body.classList.toggle('kg-mode', mode === 'kg');
+  document.getElementById('elem-hud').style.display = mode === 'elem' ? 'flex' : 'none';
+  document.getElementById('kg-hud').style.display = mode === 'kg' ? 'flex' : 'none';
+  document.getElementById('back-btn-answer').onclick = mode === 'elem' ? confirmExit : () => { clearInterval(timerHandle); goToCurrentMap(); };
+  showScreen('screen-answer');
+  if (mode === 'elem') startTimer(); else document.getElementById('timer').textContent = '';
+  renderQuestion();
+}
+
+function startTimer() {
+  clearInterval(timerHandle);
+  timerHandle = setInterval(() => {
+    if (!rt) return;
+    rt.remainingSec--;
+    updateTimerUI();
+    if (rt.remainingSec <= 0) { clearInterval(timerHandle); onTimeout(); }
+  }, 1000);
+  updateTimerUI();
+}
+function updateTimerUI() {
+  const m = Math.floor(rt.remainingSec / 60).toString().padStart(2, '0');
+  const s = (rt.remainingSec % 60).toString().padStart(2, '0');
+  document.getElementById('timer').textContent = `${m}:${s}`;
+}
+
+function currentQuestion() {
+  if (rt.phase === 'first') return rt.questions[rt.index];
+  return rt.wrongQueue[rt.retryIndex];
+}
+
+function renderQuestion() {
+  const q = currentQuestion();
+  rt.currentInput = ''; rt.selectedChoice = null;
+  rt.questionStartTime = Date.now();
+
+  const total = rt.questions.length;
+  const label = rt.phase === 'first' ? `第${rt.index + 1}/${total}题` : `错题重答 ${rt.retryIndex + 1}/${rt.wrongQueue.length}`;
+  if (rt.mode === 'elem') {
+    document.getElementById('qindex').textContent = label;
+    document.getElementById('correct-count').textContent = '🟢' + rt.correctCount;
+    document.getElementById('wrong-count').textContent = '🔴' + rt.wrongCount;
+  } else {
+    document.getElementById('qindex-kg').textContent = `第${rt.index + 1}/${total}题`;
+  }
+
+  const card = document.getElementById('question-card');
+  card.className = 'question-card';
+
+  const arithBlock = document.getElementById('arith-block');
+  const choiceBlock = document.getElementById('choice-block');
+
+  if (q.type === 'arith') {
+    card.textContent = q.expression;
+    arithBlock.style.display = 'flex';
+    choiceBlock.style.display = 'none';
+    document.getElementById('answer-display').textContent = '';
+    document.getElementById('answer-display').classList.remove('placeholder');
+    document.getElementById('answer-display').textContent = '';
+    setPlaceholder();
+    window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+  } else {
+    if (q.promptVisual) {
+      card.innerHTML = window.KS.renderVisual(q.promptVisual);
+    } else {
+      card.textContent = q.promptText;
+    }
+    arithBlock.style.display = 'none';
+    choiceBlock.style.display = 'grid';
+    choiceBlock.innerHTML = '';
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-opt' + (opt.visual ? ' has-visual' : '');
+      if (opt.visual) {
+        btn.innerHTML = window.KS.renderVisual(opt.visual);
+      } else {
+        btn.style.fontSize = opt.size ? opt.size + 'px' : '';
+        btn.textContent = opt.label;
+      }
+      btn.onclick = () => submitChoice(opt, btn);
+      choiceBlock.appendChild(btn);
+    });
+    window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+  }
+}
+
+function setPlaceholder() {
+  const disp = document.getElementById('answer-display');
+  if (rt.currentInput === '') { disp.textContent = '请输入答案'; disp.classList.add('placeholder'); }
+  else { disp.textContent = rt.currentInput; disp.classList.remove('placeholder'); }
+}
+
+function manualSpeak() {
+  const q = currentQuestion(); if (!q) return;
+  window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+}
+
+// ---- 数字键盘 ----
+function keypadInput(d) {
+  if (rt.currentInput.length >= 4) return;
+  rt.currentInput += d; setPlaceholder();
+}
+function keypadClear() { rt.currentInput = ''; setPlaceholder(); }
+function keypadDelete() { rt.currentInput = rt.currentInput.slice(0, -1); setPlaceholder(); }
+
+function keypadConfirm() {
+  if (rt.currentInput === '') {
+    const disp = document.getElementById('answer-display');
+    disp.textContent = '请先输入答案哦'; disp.classList.remove('placeholder');
+    disp.style.color = '#dc2626';
+    setTimeout(() => { disp.style.color = ''; setPlaceholder(); }, 900);
+    return;
+  }
+  const q = currentQuestion();
+  const userAnswer = parseInt(rt.currentInput, 10);
+  const isCorrect = userAnswer === q.answer;
+  judgeAndProceed(isCorrect);
+}
+
+// ---- 选择题 ----
+function submitChoice(opt, btnEl) {
+  document.querySelectorAll('.choice-opt').forEach(b => b.disabled = true);
+  const isCorrect = !!opt.correct;
+  btnEl.classList.add(isCorrect ? 'opt-correct' : 'opt-wrong');
+  if (!isCorrect) {
+    const correctBtn = Array.from(document.querySelectorAll('.choice-opt')).find((b, i) => currentQuestion().options[i].correct);
+    if (correctBtn) correctBtn.classList.add('opt-correct');
+  }
+  judgeAndProceed(isCorrect);
+}
+
+// ---- 统一判定与推进 ----
+function judgeAndProceed(isCorrect) {
+  const q = currentQuestion();
+  const elapsed = (Date.now() - rt.questionStartTime) / 1000;
+  rt.questionTimes.push(elapsed);
+
+  const card = document.getElementById('question-card');
+  card.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  if (rt.mode === 'kg') {
+    // 幼儿园段：不强制重答，答对给星星鼓励，答错温和提示后仍前进
+    if (isCorrect) {
+      rt.correctCount++;
+      window.speechQueue.enqueue(window.KS_TITLES.randomEncourage() + '！', { rate: 1.05, pitch: 1.15 });
+    } else {
+      rt.wrongCount++;
+      window.speechQueue.enqueue('再想想哦', { rate: 0.95, pitch: 1 });
+    }
+    setTimeout(advanceKg, 900);
+    return;
+  }
+
+  // 小学段：完整机制
+  if (rt.phase === 'first') {
+    if (isCorrect) {
+      rt.correctCount++; rt.comboStreak++;
+      rt.maxComboReached = Math.max(rt.maxComboReached, rt.comboStreak);
+    } else {
+      rt.wrongCount++; rt.wrongQueue.push(q);
+      rt.comboStreak = 0; rt.announcedMaxThreshold = 0;
+    }
+  } else {
+    if (!isCorrect) rt.retryFailed = true;
+  }
+  document.getElementById('correct-count').textContent = '🟢' + rt.correctCount;
+  document.getElementById('wrong-count').textContent = '🔴' + rt.wrongCount;
+
+  let titleTriggered = null;
+  if (rt.phase === 'first' && isCorrect) {
+    titleTriggered = window.KS_TITLES.checkComboTitle(rt.comboStreak, rt.announcedMaxThreshold, rt.comboTitles);
+  }
+  if (titleTriggered) {
+    rt.announcedMaxThreshold = titleTriggered.threshold;
+    rt.overallBestThreshold = Math.max(rt.overallBestThreshold, titleTriggered.threshold);
+    showComboBadge(titleTriggered);
+    const enc = window.KS_TITLES.randomEncourage();
+    window.speechQueue.enqueue(`${enc}！${titleTriggered.name}！`, {
+      rate: titleTriggered.rate, pitch: titleTriggered.pitch,
+      onEnd: () => setTimeout(advanceElem, 300)
+    });
+  } else {
+    setTimeout(advanceElem, 700);
+  }
+}
+
+function showComboBadge(title) {
+  const layer = document.getElementById('combo-badge-layer');
+  layer.innerHTML = '';
+  const el = document.createElement('div');
+  el.className = 'combo-badge ' + title.cls;
+  el.innerHTML = `<span style="font-size:22px">${title.icon}</span><span>${title.name}</span>`;
+  layer.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+}
+
+function advanceKg() {
+  if (!rt) return;
+  rt.index++;
+  if (rt.index < rt.questions.length) renderQuestion();
+  else finishLevel(true);
+}
+function advanceElem() {
+  if (!rt) return;
+  if (rt.phase === 'first') {
+    rt.index++;
+    if (rt.index < rt.questions.length) renderQuestion();
+    else if (rt.isDaily || rt.wrongCount === 0) finishLevel(true);
+    else { rt.phase = 'retry'; rt.retryIndex = 0; renderQuestion(); }
+  } else {
+    rt.retryIndex++;
+    if (rt.retryIndex < rt.wrongQueue.length) renderQuestion();
+    else finishLevel(!rt.retryFailed);
+  }
+}
+
+function onTimeout() {
+  window.speechQueue.stopAll();
+  if (rt && rt.isDaily) { finishLevel(true); return; }
+  showScreen('screen-failed');
+  document.querySelector('#screen-failed .settle-title').textContent = '时间到啦，再挑战一次吧！';
+}
+function confirmExit() {
+  if (confirm('当前进度未保存，确定退出吗？')) {
+    clearInterval(timerHandle); window.speechQueue.stopAll(); goToCurrentMap();
+  }
+}
+
+// ===== 结算 =====
+function finishLevel(success) {
+  clearInterval(timerHandle);
+  window.speechQueue.stopAll();
+  const totalTimeSec = Math.round((Date.now() - rt.startTime) / 1000);
+  const st = getStage(rt.stageId);
+
+  if (!success) {
+    showScreen('screen-failed');
+    document.querySelector('#screen-failed .settle-title').textContent = '挑战失败，再来一次吧！';
+    return;
+  }
+
+  markDailyCheckin();
+  if (!rt.isDaily) {
+    const sp = getStageProgress(rt.stageId);
+    if (!sp.completed.includes(rt.levelNum)) sp.completed.push(rt.levelNum);
+    sp.maxUnlocked = Math.max(sp.maxUnlocked, rt.levelNum + 1);
+    saveStageProgress(rt.stageId, sp);
+  }
+
+  const m = Math.floor(totalTimeSec / 60).toString().padStart(2, '0');
+  const s = (totalTimeSec % 60).toString().padStart(2, '0');
+  document.getElementById('stat-time').textContent = `${m}:${s}`;
+  document.getElementById('settle-emoji').textContent = '🎉';
+  document.getElementById('settle-title').textContent = rt.isDaily
+    ? (rt.mode === 'kg' ? '今日练习完成！' : '今日挑战完成！')
+    : '闯关成功！';
+
+  const titlesEl = document.getElementById('settle-titles');
+  titlesEl.innerHTML = '';
+  document.getElementById('titles-label').style.display = rt.mode === 'kg' ? 'none' : 'block';
+
+  if (rt.mode === 'kg') {
+    const total = rt.correctCount + rt.wrongCount || 1;
+    const acc = rt.correctCount / total;
+    const stars = acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1;
+    if (!rt.isDaily) {
+      const sp = getStageProgress(rt.stageId);
+      sp.stars[rt.levelNum] = Math.max(sp.stars[rt.levelNum] || 0, stars);
+      saveStageProgress(rt.stageId, sp);
+    } else {
+      saveDailyRecord(rt.stageId, { stars, timeSec: totalTimeSec });
+    }
+    document.getElementById('stat-correct-wrap').style.display = 'none';
+    document.getElementById('stat-stars-wrap').style.display = 'block';
+    document.getElementById('stat-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    window.speechQueue.enqueue('今天也很棒哦！', { rate: 1.05, pitch: 1.15 });
+  } else {
+    const total = rt.correctCount + rt.wrongCount;
+    document.getElementById('stat-correct-wrap').style.display = 'block';
+    document.getElementById('stat-stars-wrap').style.display = 'none';
+    document.getElementById('stat-correct').textContent = `${rt.correctCount}/${total}`;
+
+    const avgSeconds = rt.questionTimes.length ? rt.questionTimes.reduce((a, b) => a + b, 0) / rt.questionTimes.length : 0;
+    const settleTitles = window.KS_TITLES.computeSettlementTitles({
+      firstRoundCorrect: rt.correctCount, firstRoundWrong: rt.wrongCount,
+      avgSeconds, maxComboReached: rt.maxComboReached
+    });
+    const comboAchieved = rt.comboTitles.find(t => t.threshold === rt.overallBestThreshold);
+    const allTitles = [];
+    if (comboAchieved) allTitles.push({ name: comboAchieved.name, icon: comboAchieved.icon, cls: comboAchieved.cls, desc: `${comboAchieved.name}！` });
+    allTitles.push(...settleTitles);
+    allTitles.forEach(t => {
+      const pill = document.createElement('div');
+      pill.className = 'pill ' + t.cls;
+      pill.innerHTML = `<span>${t.icon}</span><span>${t.name}</span>`;
+      titlesEl.appendChild(pill);
+    });
+    allTitles.forEach(t => window.speechQueue.enqueue(t.desc || `获得${t.name}`, { rate: 1.1, pitch: 1.1 }));
+
+    if (rt.isDaily) {
+      const accuracy = total > 0 ? Math.round(rt.correctCount / total * 100) : 0;
+      saveDailyRecord(rt.stageId, { accuracy, timeText: `${m}:${s}`, timeSec: totalTimeSec, correctCount: rt.correctCount, total });
+    }
+  }
+
+  const nextBtn = document.getElementById('btn-next-level');
+  const retryBtn = document.getElementById('btn-retry-level');
+  if (rt.isDaily) {
+    nextBtn.style.display = 'none';
+    if (retryBtn) retryBtn.style.display = 'none';
+  } else {
+    if (retryBtn) retryBtn.style.display = 'block';
+    const isLastInStage = rt.levelNum >= st.levels.length;
+    if (isLastInStage) { nextBtn.textContent = '完成本学段！返回地图'; nextBtn.onclick = goToCurrentMap; }
+    else { nextBtn.textContent = '挑战下一关'; nextBtn.onclick = challengeNext; }
+    nextBtn.style.display = 'block';
+  }
+
+  showScreen('screen-settlement');
+}
+
+function challengeNext() { startLevel(rt.stageId, rt.levelNum + 1); }
+function retryLevel() { startLevel(rt.stageId, rt.levelNum); }
+
+goHome();
+
+
+
+</script>
+</body>
+</html>
