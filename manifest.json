@@ -1,0 +1,14 @@
+{
+  "name": "口算闯关营",
+  "short_name": "口算闯关营",
+  "description": "幼儿园到三年级数学启蒙与计算闯关学习App",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#eef4ff",
+  "theme_color": "#2451c4",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
