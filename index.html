@@ -22,21 +22,47 @@ button { font-family: inherit; border: none; cursor: pointer; }
 .home-title { font-size:28px; font-weight:800; color:#2451c4; text-align:center; margin-top:6px; }
 .home-sub { font-size:13px; color:#5a6b8c; text-align:center; margin:4px 0 6px; }
 .streak-display { text-align:center; font-size:13px; color:#ff7a00; font-weight:700; min-height:18px; margin-bottom:4px; }
-.home-nav-row { display:flex; gap:10px; margin-bottom:12px; }
-.home-nav-btn { flex:1; background:#fff; border:1.5px solid #cfdcff; color:#2451c4; font-size:13px; font-weight:700; padding:10px; border-radius:14px; }
+.home-nav-row { display:flex; gap:10px; margin-bottom:10px; }
+.home-nav-btn { flex:1; background:#fff; border:1.5px solid #cfdcff; color:#2451c4; font-size:13px; font-weight:700; padding:10px; border-radius:14px; box-shadow:0 3px 10px rgba(36,81,196,.05); }
+.home-feature-grid { display:grid; grid-template-columns:1fr; gap:12px; margin:4px 0 12px; }
+.home-feature-card { position:relative; overflow:hidden; border-radius:22px; padding:18px 18px 16px; text-align:left; min-height:112px; box-shadow:0 8px 22px rgba(36,81,196,.12); transition:transform .12s, box-shadow .12s; }
+.home-feature-card:active { transform:scale(.985); box-shadow:0 4px 12px rgba(36,81,196,.12); }
+.home-feature-card.grade { background:linear-gradient(135deg,#4f7dfb 0%,#2451c4 100%); color:#fff; }
+.home-feature-card.tower { background:linear-gradient(135deg,#8b5cf6 0%,#5b21b6 100%); color:#fff; }
+.feature-orb { position:absolute; width:120px; height:120px; border-radius:50%; right:-24px; top:-32px; background:rgba(255,255,255,.13); }
+.feature-orb.small { width:72px; height:72px; right:52px; top:54px; background:rgba(255,255,255,.08); }
+.feature-icon { position:absolute; right:18px; bottom:12px; font-size:48px; filter:drop-shadow(0 5px 7px rgba(0,0,0,.12)); }
+.feature-kicker { font-size:11px; opacity:.82; font-weight:700; letter-spacing:.5px; }
+.feature-title { font-size:22px; font-weight:900; margin-top:3px; }
+.feature-desc { font-size:12px; opacity:.9; margin-top:5px; }
+.feature-arrow { position:absolute; left:18px; bottom:14px; font-size:11px; font-weight:700; opacity:.9; }
 .stage-list { display:flex; flex-direction:column; gap:0; }
-.stage-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+.home-mini-note { background:#fff; border-radius:14px; padding:12px 14px; color:#7a89a6; font-size:11px; line-height:1.5; box-shadow:0 3px 10px rgba(36,81,196,.05); }
 .section-divider { font-size:13px; font-weight:800; color:#5a6b8c; margin:16px 2px 10px; padding-top:6px; border-top:1px dashed #cfdcff; }
-.stage-card { background:#fff; border-radius:16px; padding:14px 6px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); transition:transform .1s; }
-.stage-card:active { transform:scale(.95); }
+.stage-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.stage-card { background:#fff; border-radius:18px; padding:15px 10px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); transition:transform .1s; }
+.stage-card:active { transform:scale(.96); }
 .stage-card.soon { opacity:.45; }
 .stage-card.mode-kg { background:linear-gradient(160deg,#fff9ec,#fff); border:1.5px solid #ffe4b3; }
 .stage-card.mode-elem { background:linear-gradient(160deg,#eef4ff,#fff); border:1.5px solid #cfdcff; }
-.stage-card.mode-tower { background:linear-gradient(160deg,#fdeeff,#fff); border:1.5px solid #e6bfff; }
-.stage-icon { font-size:28px; }
-.stage-name { font-size:14px; font-weight:700; margin-top:4px; }
-.stage-sub { font-size:10px; color:#8b98b3; margin-top:2px; }
-.stage-progress-mini { font-size:9px; color:#4f7dfb; font-weight:700; margin-top:3px; }
+.stage-card.mode-tower { background:linear-gradient(160deg,#f6efff,#fff); border:1.5px solid #d8b4ff; }
+.stage-icon { font-size:30px; }
+.stage-name { font-size:14px; font-weight:800; margin-top:5px; }
+.stage-sub { font-size:10px; color:#8b98b3; margin-top:3px; line-height:1.35; }
+.stage-progress-mini { font-size:9px; color:#4f7dfb; font-weight:700; margin-top:4px; }
+.selector-head { background:linear-gradient(135deg,#fff,#eef4ff); border:1px solid #dbe5ff; border-radius:18px; padding:14px 15px; margin-bottom:12px; }
+.selector-title { font-size:17px; font-weight:900; color:#2451c4; }
+.selector-sub { font-size:11px; color:#7a89a6; margin-top:4px; line-height:1.5; }
+.selector-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.selector-card { position:relative; background:#fff; border:1.5px solid #dbe5ff; border-radius:18px; padding:16px 12px; min-height:116px; text-align:left; box-shadow:0 4px 12px rgba(36,81,196,.07); transition:transform .1s; }
+.selector-card:active { transform:scale(.97); }
+.selector-card.tower { background:linear-gradient(160deg,#f7f0ff,#fff); border-color:#d8b4ff; }
+.selector-card .sel-icon { font-size:30px; }
+.selector-card .sel-name { font-size:15px; font-weight:900; margin-top:6px; color:#24324f; }
+.selector-card .sel-sub { font-size:10px; color:#8b98b3; margin-top:4px; line-height:1.45; }
+.selector-card .sel-arrow { position:absolute; right:11px; bottom:11px; color:#4f7dfb; font-size:16px; font-weight:800; }
+.selector-card.tower .sel-arrow { color:#7c3aed; }
+@media (min-width:520px){ .home-feature-grid{grid-template-columns:1fr 1fr;} .selector-grid{grid-template-columns:repeat(3,1fr);} .stage-grid{grid-template-columns:repeat(3,1fr);} }
 
 /* 每日任务卡片 */
 .daily-card { border-radius:16px; padding:14px 16px; margin-bottom:12px; box-shadow:0 4px 14px rgba(36,81,196,.1); transition:transform .1s; }
@@ -128,7 +154,9 @@ button { font-family: inherit; border: none; cursor: pointer; }
 .question-card.correct { background:#e8fbe9; }
 .question-card.wrong { background:#fdecec; }
 
-.speak-btn { flex-shrink:0; margin:0 auto 4px; display:block; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:600; padding:6px 16px; border-radius:20px; }
+.voice-row { display:flex; align-items:center; justify-content:center; gap:8px; margin:0 auto 4px; }
+.speak-btn { flex-shrink:0; margin:0; display:block; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:600; padding:6px 16px; border-radius:20px; }
+.voice-toggle-btn { background:#f4f7ff; color:#5a6b8c; border:1px solid #dbe5ff; font-size:11px; font-weight:700; padding:6px 11px; border-radius:20px; }
 
 /* 数字键盘块：答案显示框 + 键盘 */
 #arith-block { flex-shrink:0; display:flex; flex-direction:column; }
@@ -199,7 +227,40 @@ body.kg-mode .choice-opt { border-radius:20px; }
     <div class="home-nav-row">
       <button class="home-nav-btn achv-nav-btn" onclick="goToAchievements()">🏅 成就与段位</button>
     </div>
-    <div class="stage-list" id="stage-list"></div>
+    <div class="home-feature-grid">
+      <button class="home-feature-card grade" onclick="openCategory('grade')">
+        <span class="feature-orb"></span><span class="feature-orb small"></span>
+        <span class="feature-kicker">MAIN COURSE · 主线学习</span>
+        <span class="feature-title">年级闯关</span>
+        <span class="feature-desc">小班 · 中班 · 大班 · 一～三年级</span>
+        <span class="feature-arrow">进入选择 →</span><span class="feature-icon">📚</span>
+      </button>
+      <button class="home-feature-card tower" onclick="openCategory('tower')">
+        <span class="feature-orb"></span><span class="feature-orb small"></span>
+        <span class="feature-kicker">SPECIAL TRAINING · 专项挑战</span>
+        <span class="feature-title">算数塔</span>
+        <span class="feature-desc">5阶专项训练 · 180关持续挑战</span>
+        <span class="feature-arrow">进入算数塔 →</span><span class="feature-icon">🗼</span>
+      </button>
+    </div>
+    <div class="section-divider">今日学习</div>
+    <div class="home-mini-note">先选一个学习入口，再进入对应年级或专项关卡。首页更清爽，内容更集中。</div>
+  </div>
+</div>
+
+<!-- 模式选择页：首页只展示两大入口，进入后再选择年级/算数塔 -->
+<div id="screen-selector" class="screen" style="display:none;">
+  <div class="topbar">
+    <button class="back-btn" id="selector-back-btn" onclick="goSelectorBack()">← 返回</button>
+    <div class="topbar-title" id="selector-title">年级闯关</div>
+    <div style="width:44px;"></div>
+  </div>
+  <div class="sub-scroll">
+    <div class="selector-head">
+      <div class="selector-title" id="selector-head-title">选择学习阶段</div>
+      <div class="selector-sub" id="selector-head-sub">从小班到三年级，按年龄与教材阶段选择适合自己的口算闯关。</div>
+    </div>
+    <div class="selector-grid" id="selector-list"></div>
   </div>
 </div>
 
@@ -235,7 +296,7 @@ body.kg-mode .choice-opt { border-radius:20px; }
       <div id="combo-badge-layer"></div>
     </div>
 
-    <button class="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button>
+    <div class="voice-row"><button class="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button><button class="voice-toggle-btn" id="voice-toggle-btn" onclick="toggleAutoVoice()">🔊 自动播报已开</button></div>
 
     <div id="arith-block">
       <div class="answer-display placeholder" id="answer-display">请输入答案</div>
@@ -553,8 +614,50 @@ function arithLevel(poolFn, count) {
 
 // ===== 选择题生成（点选/选择题类，幼儿园及部分小学概念题共用） =====
 // option: { label(展示文字/emoji), correct(bool), size(可选，用于大小/高矮对比的字号) }
+function choiceOptionKey(opt) {
+  if (opt.visual) return 'visual:' + JSON.stringify(opt.visual);
+  return 'label:' + String(opt.label ?? '') + '|size:' + String(opt.size ?? '');
+}
+function sanitizeChoiceOptions(options) {
+  const input = Array.isArray(options) ? options : [];
+  const seen = new Set();
+  const unique = [];
+  let correctIndex = -1;
+  input.forEach((opt, index) => {
+    if (!opt) return;
+    const item = { ...opt };
+    const key = choiceOptionKey(item);
+    if (seen.has(key)) {
+      if (item.correct === true && correctIndex === -1) {
+        const existingIndex = unique.findIndex(x => choiceOptionKey(x) === key);
+        if (existingIndex >= 0) correctIndex = existingIndex;
+      }
+      return;
+    }
+    seen.add(key);
+    if (item.correct === true && correctIndex === -1) correctIndex = unique.length;
+    else if (item.correct === true) item.correct = false;
+    unique.push(item);
+  });
+  // 所有选择题必须存在且只存在一个正确答案；若数据漏标，默认第一项为正确项，避免出现“没有正确答案”。
+  if (correctIndex < 0 && unique.length) { unique[0].correct = true; correctIndex = 0; }
+  unique.forEach((opt, i) => { opt.correct = i === correctIndex; });
+  // 数字/文字选项因边界值产生重复时，尽量补充一个不重复的干扰项。
+  if (unique.length >= 2 && unique.length < Math.min(3, input.length)) {
+    const correct = unique[correctIndex] || unique[0];
+    if (!correct.visual && correct.label != null && /^-?\d+(?:\.\d+)?$/.test(String(correct.label))) {
+      const n = Number(correct.label);
+      for (const delta of [1, -1, 2, -2, 3, -3]) {
+        const label = String(n + delta);
+        const candidate = { label, correct: false };
+        if (!seen.has(choiceOptionKey(candidate))) { seen.add(choiceOptionKey(candidate)); unique.push(candidate); break; }
+      }
+    }
+  }
+  return shuffle(unique);
+}
 function makeChoice(promptText, speechText, options) {
-  return { type: 'choice', promptText, speechText, options: shuffle(options) };
+  return { type: 'choice', promptText, speechText, options: sanitizeChoiceOptions(options) };
 }
 
 function starsStr(n) { return '⭐'.repeat(n); }
@@ -2042,64 +2145,80 @@ window.KS = { shuffle, pick, randInt, makeArith, genAddPool, genSubPool, genMixP
 })();
 
 
-// ===== 语音解锁（修复移动端语音无法播放的核心问题） =====
-// 原理：iOS Safari等移动浏览器要求语音合成必须由"用户直接点击"同步触发才允许播放，
-// 通过setTimeout等延迟触发的语音会被静默拦截。这里在用户进入App后的第一次点击时，
-// 同步播放一条几乎无声的语音来"解锁"，之后整个会话里延迟触发的语音也能正常播放。
+// ===== 稳定语音播报：移动端解锁 + 语音列表加载 + 失败重试 =====
 (function () {
   let unlocked = false;
   function unlockSpeech() {
-    if (unlocked) return;
+    if (unlocked || !('speechSynthesis' in window)) return;
     unlocked = true;
-    if ('speechSynthesis' in window) {
-      try {
-        const u = new SpeechSynthesisUtterance(' ');
-        u.volume = 0.01;
-        window.speechSynthesis.speak(u);
-      } catch (e) {}
-    }
+    try {
+      const u = new SpeechSynthesisUtterance(' ');
+      u.lang = 'zh-CN'; u.volume = 0.01; u.rate = 1;
+      window.speechSynthesis.speak(u);
+      setTimeout(() => { try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){} }, 80);
+    } catch (e) {}
   }
-  document.addEventListener('click', unlockSpeech, { once: true, capture: true });
-  document.addEventListener('touchend', unlockSpeech, { once: true, capture: true });
+  document.addEventListener('pointerdown', unlockSpeech, { once:true, capture:true, passive:true });
+  document.addEventListener('touchend', unlockSpeech, { once:true, capture:true, passive:true });
+  if ('speechSynthesis' in window) {
+    try { window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); } catch(e) {}
+  }
 })();
 
 class SpeechQueue {
-  constructor() { this.queue = []; this.speaking = false; this.currentUtteranceId = 0; }
+  constructor() { this.queue=[]; this.speaking=false; this.currentUtteranceId=0; this.retryToken=0; }
   stopAll() {
-    if ('speechSynthesis' in window) { try { window.speechSynthesis.cancel(); } catch (e) {} }
-    this.queue = []; this.speaking = false; this.currentUtteranceId++;
+    this.retryToken++;
+    if ('speechSynthesis' in window) { try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){} }
+    this.queue=[]; this.speaking=false; this.currentUtteranceId++;
   }
-  enqueue(text, { rate = 1, pitch = 1, onEnd = null } = {}) {
-    const id = this.currentUtteranceId;
-    this.queue.push({ text, rate, pitch, onEnd, id });
-    this._processNext();
+  enqueue(text, {rate=1, pitch=1, onEnd=null}={}) {
+    if (!text) return;
+    const id=this.currentUtteranceId; this.queue.push({text:String(text),rate,pitch,onEnd,id}); this._processNext();
   }
-  speakImmediate(text, opts = {}) { this.stopAll(); this.enqueue(text, opts); }
+  speakImmediate(text, opts={}) { this.stopAll(); this.enqueue(text, opts); }
+  _pickVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices=window.speechSynthesis.getVoices();
+    return voices.find(v => /^zh(-|_)CN/i.test(v.lang)) || voices.find(v => /^zh/i.test(v.lang)) || voices[0] || null;
+  }
   _processNext() {
     if (this.speaking) return;
-    const item = this.queue.shift();
-    if (!item) return;
-    this.speaking = true;
-    const myId = item.id;
-    if (!('speechSynthesis' in window)) {
-      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext(); return;
-    }
+    const item=this.queue.shift(); if(!item) return;
+    if(item.id!==this.currentUtteranceId) { this._processNext(); return; }
+    this.speaking=true; const myId=item.id; let started=false; let finished=false;
+    if(!('speechSynthesis' in window)) { this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext(); return; }
     let utter;
     try {
-      utter = new SpeechSynthesisUtterance(item.text);
-      utter.lang = 'zh-CN'; utter.rate = item.rate; utter.pitch = item.pitch;
-    } catch (e) {
-      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext(); return;
-    }
-    const finish = () => {
-      if (myId !== this.currentUtteranceId) return;
-      this.speaking = false; if (item.onEnd) item.onEnd(); this._processNext();
+      utter=new SpeechSynthesisUtterance(item.text);
+      utter.lang='zh-CN'; utter.rate=Math.max(.75,Math.min(1.35,item.rate)); utter.pitch=Math.max(.7,Math.min(1.5,item.pitch)); utter.volume=1;
+      const voice=this._pickVoice(); if(voice) utter.voice=voice;
+    } catch(e) { this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext(); return; }
+    const finish=()=>{
+      if(finished || myId!==this.currentUtteranceId) return;
+      finished=true; this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext();
     };
-    utter.onend = finish; utter.onerror = finish;
-    try { window.speechSynthesis.speak(utter); } catch (e) { finish(); }
+    utter.onstart=()=>{started=true;}; utter.onend=finish; utter.onerror=()=>finish();
+    try {
+      window.speechSynthesis.cancel(); window.speechSynthesis.resume();
+      // 给移动端浏览器一个极短的调度间隙，减少 cancel→speak 连续调用被吞掉的概率。
+      setTimeout(()=>{
+        if(myId!==this.currentUtteranceId || finished) return;
+        try { window.speechSynthesis.resume(); window.speechSynthesis.speak(utter); } catch(e){ finish(); return; }
+        setTimeout(()=>{
+          if(!started && !finished && myId===this.currentUtteranceId) {
+            try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){}
+            setTimeout(()=>{
+              if(myId!==this.currentUtteranceId || finished) return;
+              try { window.speechSynthesis.speak(utter); } catch(e){ finish(); }
+            },80);
+          }
+        },900);
+      },30);
+    } catch(e) { finish(); }
   }
 }
-window.speechQueue = new SpeechQueue();
+window.speechQueue=new SpeechQueue();
 
 const ENCOURAGE_WORDS = ['太厉害了', '游刃有余', '无人能挡', '横扫千军', '神机妙算', '百战百胜'];
 function randomEncourage() { return ENCOURAGE_WORDS[Math.floor(Math.random() * ENCOURAGE_WORDS.length)]; }
@@ -2342,42 +2461,86 @@ function goHome() {
   showScreen('screen-home');
 }
 function renderStageList() {
+  // 兼容旧调用：现在首页只保留两大入口，不再把全部学段直接铺开。
   const wrap = document.getElementById('stage-list');
-  wrap.innerHTML = '';
-  const gradeStages = STAGES.filter(s => !s.id.startsWith('tower'));
-  const towerStages = STAGES.filter(s => s.id.startsWith('tower'));
-
-  function renderCard(st) {
-    const div = document.createElement('div');
-    div.className = 'stage-card' + (st.comingSoon ? ' soon' : '') + (st.mode === 'kg' ? ' mode-kg' : ' mode-elem') + (st.id.startsWith('tower') ? ' mode-tower' : '');
-    const count = st.comingSoon ? st.plannedCount : st.levels.length;
-    const sp = st.comingSoon ? null : getStageProgress(st.id);
-    const progressText = sp ? `已通关${sp.completed.length}/${count}` : '';
-    div.innerHTML = `<div class="stage-icon">${st.icon}</div>
-      <div class="stage-name">${st.name}</div>
-      <div class="stage-sub">${st.sub} · ${count}关${st.comingSoon ? '（敬请期待）' : ''}</div>
-      <div class="stage-progress-mini">${progressText}</div>`;
-    if (!st.comingSoon) div.onclick = () => goToMap(st.id);
-    return div;
-  }
-
-  gradeStages.forEach(st => wrap.appendChild(renderCard(st)));
-
-  const gradeGrid = document.createElement('div');
-  gradeGrid.className = 'stage-grid';
-  gradeStages.forEach(st => gradeGrid.appendChild(renderCard(st)));
-  wrap.appendChild(gradeGrid);
-
-  const divider = document.createElement('div');
-  divider.className = 'section-divider';
-  divider.textContent = '🗼 小天才算数塔（专项口算闯关）';
-  wrap.appendChild(divider);
-
-  const towerGrid = document.createElement('div');
-  towerGrid.className = 'stage-grid';
-  towerStages.forEach(st => towerGrid.appendChild(renderCard(st)));
-  wrap.appendChild(towerGrid);
+  if (wrap) wrap.innerHTML = '';
 }
+
+let selectorStack = [];
+const GRADE_GROUPS = [
+  { id:'xiaoban', name:'小班', sub:'3-4岁 · 启蒙', icon:'🌱', stageIds:['xiaoban'] },
+  { id:'zhongban', name:'中班', sub:'4-5岁 · 数字与规律', icon:'🌼', stageIds:['zhongban'] },
+  { id:'daban', name:'大班', sub:'5-6岁 · 10/20以内基础', icon:'🌟', stageIds:['daban'] },
+  { id:'y1', name:'一年级', sub:'6-7岁 · 上册 + 下册', icon:'📘', stageIds:['y1s1','y1s2'] },
+  { id:'y2', name:'二年级', sub:'7-8岁 · 上册 + 下册', icon:'📙', stageIds:['y2s1','y2s2'] },
+  { id:'y3', name:'三年级', sub:'8-9岁 · 上册 + 下册', icon:'📔', stageIds:['y3s1','y3s2'] },
+];
+function openCategory(type) {
+  window.speechQueue.stopAll();
+  selectorStack = [{ type:'category' }];
+  renderSelector(type);
+  showScreen('screen-selector');
+}
+function goSelectorBack() {
+  window.speechQueue.stopAll();
+  if (selectorStack.length > 1) {
+    selectorStack.pop();
+    const state = selectorStack[selectorStack.length - 1];
+    renderSelector(state.type, state.groupId);
+  } else {
+    selectorStack = [];
+    goHome();
+  }
+}
+function openGradeGroup(groupId) {
+  const group = GRADE_GROUPS.find(g => g.id === groupId);
+  if (!group) return;
+  selectorStack.push({ type:'gradeGroup', groupId });
+  renderSelector('gradeGroup', groupId);
+}
+function renderSelector(type, groupId) {
+  const list = document.getElementById('selector-list');
+  const title = document.getElementById('selector-title');
+  const headTitle = document.getElementById('selector-head-title');
+  const headSub = document.getElementById('selector-head-sub');
+  list.innerHTML = '';
+  if (type === 'grade') {
+    title.textContent = '年级闯关';
+    headTitle.textContent = '选择学习阶段';
+    headSub.textContent = '从小班到三年级，先选择年级，再进入对应教材关卡。';
+    GRADE_GROUPS.forEach(g => {
+      const card = document.createElement('button'); card.className='selector-card';
+      const counts = g.stageIds.map(id => { const st=getStage(id); return st ? st.levels.length : 0; });
+      const total = counts.reduce((a,b)=>a+b,0);
+      card.innerHTML = `<div class="sel-icon">${g.icon}</div><div class="sel-name">${g.name}</div><div class="sel-sub">${g.sub}<br>共 ${total} 关</div><div class="sel-arrow">›</div>`;
+      card.onclick = () => g.stageIds.length === 1 ? goToMap(g.stageIds[0]) : openGradeGroup(g.id);
+      list.appendChild(card);
+    });
+  } else if (type === 'gradeGroup') {
+    const g = GRADE_GROUPS.find(x => x.id === groupId);
+    title.textContent = g ? g.name : '年级';
+    headTitle.textContent = g ? `${g.name} · 选择教材阶段` : '选择教材阶段';
+    headSub.textContent = '上册与下册独立记录进度，进入后可继续自己的关卡。';
+    (g ? g.stageIds : []).forEach(id => {
+      const st=getStage(id); if(!st) return;
+      const card=document.createElement('button'); card.className='selector-card';
+      const sp=getStageProgress(id);
+      card.innerHTML=`<div class="sel-icon">${st.icon}</div><div class="sel-name">${st.name}</div><div class="sel-sub">${st.sub}<br>已通关 ${sp.completed.length}/${st.levels.length}</div><div class="sel-arrow">›</div>`;
+      card.onclick=()=>goToMap(id); list.appendChild(card);
+    });
+  } else if (type === 'tower') {
+    title.textContent='算数塔';
+    headTitle.textContent='选择挑战阶数';
+    headSub.textContent='专项口算训练，共5阶180关。每一阶独立记录闯关进度。';
+    TOWER_STAGES.forEach(st=>{
+      const card=document.createElement('button'); card.className='selector-card tower';
+      const sp=getStageProgress(st.id);
+      card.innerHTML=`<div class="sel-icon">🗼</div><div class="sel-name">${st.name.replace('算数塔·','第')}阶</div><div class="sel-sub">${st.sub}<br>已通关 ${sp.completed.length}/${st.levels.length}</div><div class="sel-arrow">›</div>`;
+      card.onclick=()=>goToMap(st.id); list.appendChild(card);
+    });
+  }
+}
+
 
 // ===== 地图页 =====
 let currentStageId = null;
@@ -2447,7 +2610,7 @@ function goToCurrentMap() { goToMap(currentStageId); }
 function startDailyChallenge(stageId) {
   window.speechQueue.stopAll();
   const st = getStage(stageId);
-  const questions = buildDailyQuestions(stageId);
+  const questions = dedupeQuestions(buildDailyQuestions(stageId));
   if (!questions || questions.length === 0) {
     alert('今日题目生成遇到问题，请重新点击试试');
     goToMap(stageId);
@@ -2484,7 +2647,7 @@ function startLevel(stageId, levelNum) {
   window.speechQueue.stopAll();
   const st = getStage(stageId);
   const lvDef = st.levels[levelNum - 1];
-  const questions = lvDef.content();
+  const questions = dedupeQuestions(lvDef.content());
   if (!questions || questions.length === 0) {
     alert('这一关的题目生成遇到问题，已自动返回地图，请重新点击试试');
     goToMap(stageId);
@@ -2532,8 +2695,26 @@ function currentQuestion() {
   return rt.wrongQueue[rt.retryIndex];
 }
 
+function isAutoVoiceEnabled() { return localStorage.getItem('ks_auto_voice') !== '0'; }
+function speakQuestionAuto(q) {
+  if (!q || !q.speechText || !isAutoVoiceEnabled()) return;
+  // 每次新题先彻底终止上一题语音，再在当前渲染完成后播放，避免“上一题还在播/这一题没声音”。
+  window.speechQueue.stopAll();
+  setTimeout(() => { if (rt && currentQuestion() === q) window.speechQueue.enqueue(q.speechText, {rate:1, pitch:1}); }, 45);
+}
+function toggleAutoVoice() {
+  const enabled=isAutoVoiceEnabled();
+  localStorage.setItem('ks_auto_voice', enabled ? '0' : '1');
+  const btn=document.getElementById('voice-toggle-btn');
+  if(btn) btn.textContent=enabled ? '🔇 自动播报已关' : '🔊 自动播报已开';
+  if(enabled) window.speechQueue.stopAll();
+}
+
 function renderQuestion() {
   const q = currentQuestion();
+  if (q && q.type === 'choice') q.options = sanitizeChoiceOptions(q.options);
+  const voiceBtn = document.getElementById('voice-toggle-btn');
+  if (voiceBtn) voiceBtn.textContent = isAutoVoiceEnabled() ? '🔊 自动播报已开' : '🔇 自动播报已关';
   rt.currentInput = ''; rt.selectedChoice = null;
   rt.questionStartTime = Date.now();
 
@@ -2561,7 +2742,7 @@ function renderQuestion() {
     document.getElementById('answer-display').classList.remove('placeholder');
     document.getElementById('answer-display').textContent = '';
     setPlaceholder();
-    window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+    speakQuestionAuto(q);
   } else {
     if (q.promptVisual) {
       card.innerHTML = window.KS.renderVisual(q.promptVisual);
@@ -2574,6 +2755,7 @@ function renderQuestion() {
     q.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choice-opt' + (opt.visual ? ' has-visual' : '');
+      btn.dataset.correct = opt.correct ? '1' : '0';
       if (opt.visual) {
         btn.innerHTML = window.KS.renderVisual(opt.visual);
       } else {
@@ -2583,7 +2765,7 @@ function renderQuestion() {
       btn.onclick = () => submitChoice(opt, btn);
       choiceBlock.appendChild(btn);
     });
-    window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+    speakQuestionAuto(q);
   }
 }
 
@@ -2626,7 +2808,7 @@ function submitChoice(opt, btnEl) {
   const isCorrect = !!opt.correct;
   btnEl.classList.add(isCorrect ? 'opt-correct' : 'opt-wrong');
   if (!isCorrect) {
-    const correctBtn = Array.from(document.querySelectorAll('.choice-opt')).find((b, i) => currentQuestion().options[i].correct);
+    const correctBtn = Array.from(document.querySelectorAll('.choice-opt')).find(b => b.dataset.correct === '1');
     if (correctBtn) correctBtn.classList.add('opt-correct');
   }
   judgeAndProceed(isCorrect);
