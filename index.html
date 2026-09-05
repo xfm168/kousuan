@@ -18,51 +18,43 @@ button { font-family: inherit; border: none; cursor: pointer; }
 .screen { height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
 
 /* ===== 首页 ===== */
-.home-wrap { height:100%; display:flex; flex-direction:column; padding:20px 16px; background:linear-gradient(180deg,#dbeafe,#eef4ff 40%); overflow-y:auto; }
-.home-title { font-size:28px; font-weight:800; color:#2451c4; text-align:center; margin-top:6px; }
-.home-sub { font-size:13px; color:#5a6b8c; text-align:center; margin:4px 0 6px; }
-.streak-display { text-align:center; font-size:13px; color:#ff7a00; font-weight:700; min-height:18px; margin-bottom:4px; }
+.home-wrap { height:100%; display:flex; flex-direction:column; padding:18px 16px max(20px,env(safe-area-inset-bottom)); background:linear-gradient(180deg,#dbeafe 0%,#eef4ff 38%,#f7f9ff 100%); overflow-y:auto; }
+.home-title { font-size:28px; font-weight:900; color:#2451c4; text-align:center; margin-top:4px; letter-spacing:.5px; }
+.home-sub { font-size:13px; color:#64748b; text-align:center; margin:4px 0 3px; }
+.streak-display { text-align:center; font-size:13px; color:#ff7a00; font-weight:800; min-height:20px; margin-bottom:8px; }
 .home-nav-row { display:flex; gap:10px; margin-bottom:10px; }
-.home-nav-btn { flex:1; background:#fff; border:1.5px solid #cfdcff; color:#2451c4; font-size:13px; font-weight:700; padding:10px; border-radius:14px; box-shadow:0 3px 10px rgba(36,81,196,.05); }
-.home-feature-grid { display:grid; grid-template-columns:1fr; gap:12px; margin:4px 0 12px; }
-.home-feature-card { position:relative; overflow:hidden; border-radius:22px; padding:18px 18px 16px; text-align:left; min-height:112px; box-shadow:0 8px 22px rgba(36,81,196,.12); transition:transform .12s, box-shadow .12s; }
-.home-feature-card:active { transform:scale(.985); box-shadow:0 4px 12px rgba(36,81,196,.12); }
-.home-feature-card.grade { background:linear-gradient(135deg,#4f7dfb 0%,#2451c4 100%); color:#fff; }
-.home-feature-card.tower { background:linear-gradient(135deg,#8b5cf6 0%,#5b21b6 100%); color:#fff; }
-.feature-orb { position:absolute; width:120px; height:120px; border-radius:50%; right:-24px; top:-32px; background:rgba(255,255,255,.13); }
-.feature-orb.small { width:72px; height:72px; right:52px; top:54px; background:rgba(255,255,255,.08); }
-.feature-icon { position:absolute; right:18px; bottom:12px; font-size:48px; filter:drop-shadow(0 5px 7px rgba(0,0,0,.12)); }
-.feature-kicker { font-size:11px; opacity:.82; font-weight:700; letter-spacing:.5px; }
-.feature-title { font-size:22px; font-weight:900; margin-top:3px; }
-.feature-desc { font-size:12px; opacity:.9; margin-top:5px; }
-.feature-arrow { position:absolute; left:18px; bottom:14px; font-size:11px; font-weight:700; opacity:.9; }
+.home-nav-btn { flex:1; min-height:42px; background:rgba(255,255,255,.9); border:1.5px solid #cfdcff; color:#2451c4; font-size:13px; font-weight:800; padding:9px 10px; border-radius:14px; box-shadow:0 3px 10px rgba(36,81,196,.05); }
 .stage-list { display:flex; flex-direction:column; gap:0; }
-.home-mini-note { background:#fff; border-radius:14px; padding:12px 14px; color:#7a89a6; font-size:11px; line-height:1.5; box-shadow:0 3px 10px rgba(36,81,196,.05); }
+.stage-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
 .section-divider { font-size:13px; font-weight:800; color:#5a6b8c; margin:16px 2px 10px; padding-top:6px; border-top:1px dashed #cfdcff; }
-.stage-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-.stage-card { background:#fff; border-radius:18px; padding:15px 10px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); transition:transform .1s; }
-.stage-card:active { transform:scale(.96); }
+.home-feature-list { display:flex; flex-direction:column; gap:12px; margin:2px 0 14px; }
+.home-feature-card { position:relative; overflow:hidden; width:100%; min-height:128px; border-radius:22px; padding:18px 18px; text-align:left; box-shadow:0 10px 26px rgba(36,81,196,.12); border:1.5px solid rgba(255,255,255,.85); transition:transform .12s,box-shadow .12s; }
+.home-feature-card:active { transform:scale(.985); box-shadow:0 6px 18px rgba(36,81,196,.12); }
+.home-feature-card.grade { background:linear-gradient(135deg,#ffffff 0%,#eaf2ff 55%,#dce8ff 100%); }
+.home-feature-card.tower { background:linear-gradient(135deg,#ffffff 0%,#f4eaff 55%,#eadcff 100%); }
+.feature-kicker { font-size:11px; font-weight:900; letter-spacing:1px; color:#6b7ea8; }
+.feature-title { font-size:22px; font-weight:900; color:#1f2a44; margin-top:4px; }
+.feature-desc { font-size:12px; color:#64748b; margin-top:5px; line-height:1.45; max-width:78%; }
+.feature-arrow { position:absolute; right:18px; bottom:17px; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.82); display:flex; align-items:center; justify-content:center; color:#2451c4; font-size:18px; font-weight:900; box-shadow:0 4px 10px rgba(36,81,196,.08); }
+.feature-icon { position:absolute; right:26px; top:22px; font-size:48px; opacity:.9; filter:drop-shadow(0 5px 8px rgba(36,81,196,.12)); }
+.stage-card { background:#fff; border-radius:18px; padding:15px 6px; text-align:center; box-shadow:0 4px 12px rgba(36,81,196,.08); transition:transform .1s; min-height:106px; }
+.stage-card:active { transform:scale(.95); }
 .stage-card.soon { opacity:.45; }
 .stage-card.mode-kg { background:linear-gradient(160deg,#fff9ec,#fff); border:1.5px solid #ffe4b3; }
 .stage-card.mode-elem { background:linear-gradient(160deg,#eef4ff,#fff); border:1.5px solid #cfdcff; }
-.stage-card.mode-tower { background:linear-gradient(160deg,#f6efff,#fff); border:1.5px solid #d8b4ff; }
+.stage-card.mode-tower { background:linear-gradient(160deg,#fdeeff,#fff); border:1.5px solid #e6bfff; }
 .stage-icon { font-size:30px; }
 .stage-name { font-size:14px; font-weight:800; margin-top:5px; }
-.stage-sub { font-size:10px; color:#8b98b3; margin-top:3px; line-height:1.35; }
-.stage-progress-mini { font-size:9px; color:#4f7dfb; font-weight:700; margin-top:4px; }
-.selector-head { background:linear-gradient(135deg,#fff,#eef4ff); border:1px solid #dbe5ff; border-radius:18px; padding:14px 15px; margin-bottom:12px; }
-.selector-title { font-size:17px; font-weight:900; color:#2451c4; }
-.selector-sub { font-size:11px; color:#7a89a6; margin-top:4px; line-height:1.5; }
-.selector-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-.selector-card { position:relative; background:#fff; border:1.5px solid #dbe5ff; border-radius:18px; padding:16px 12px; min-height:116px; text-align:left; box-shadow:0 4px 12px rgba(36,81,196,.07); transition:transform .1s; }
-.selector-card:active { transform:scale(.97); }
-.selector-card.tower { background:linear-gradient(160deg,#f7f0ff,#fff); border-color:#d8b4ff; }
-.selector-card .sel-icon { font-size:30px; }
-.selector-card .sel-name { font-size:15px; font-weight:900; margin-top:6px; color:#24324f; }
-.selector-card .sel-sub { font-size:10px; color:#8b98b3; margin-top:4px; line-height:1.45; }
-.selector-card .sel-arrow { position:absolute; right:11px; bottom:11px; color:#4f7dfb; font-size:16px; font-weight:800; }
-.selector-card.tower .sel-arrow { color:#7c3aed; }
-@media (min-width:520px){ .home-feature-grid{grid-template-columns:1fr 1fr;} .selector-grid{grid-template-columns:repeat(3,1fr);} .stage-grid{grid-template-columns:repeat(3,1fr);} }
+.stage-sub { font-size:10px; color:#8b98b3; margin-top:2px; }
+.stage-progress-mini { font-size:9px; color:#4f7dfb; font-weight:800; margin-top:4px; }
+.selector-wrap { height:100%; overflow-y:auto; padding:16px; background:linear-gradient(180deg,#eef4ff,#f8faff); }
+.selector-intro { margin:0 2px 14px; color:#64748b; font-size:12px; line-height:1.5; }
+.selector-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:11px; }
+.selector-grid .stage-card { min-height:124px; padding-top:17px; }
+.selector-grid .stage-icon { font-size:34px; }
+.selector-grid .stage-name { font-size:15px; }
+.selector-grid .stage-sub { font-size:10px; }
+.selector-grid .stage-progress-mini { font-size:10px; }
 
 /* 每日任务卡片 */
 .daily-card { border-radius:16px; padding:14px 16px; margin-bottom:12px; box-shadow:0 4px 14px rgba(36,81,196,.1); transition:transform .1s; }
@@ -154,9 +146,12 @@ button { font-family: inherit; border: none; cursor: pointer; }
 .question-card.correct { background:#e8fbe9; }
 .question-card.wrong { background:#fdecec; }
 
-.voice-row { display:flex; align-items:center; justify-content:center; gap:8px; margin:0 auto 4px; }
-.speak-btn { flex-shrink:0; margin:0; display:block; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:600; padding:6px 16px; border-radius:20px; }
-.voice-toggle-btn { background:#f4f7ff; color:#5a6b8c; border:1px solid #dbe5ff; font-size:11px; font-weight:700; padding:6px 11px; border-radius:20px; }
+.speak-row { display:flex; justify-content:center; align-items:center; gap:8px; margin:0 auto 4px; }
+.speak-btn { flex-shrink:0; background:#eef4ff; color:#2451c4; font-size:13px; font-weight:700; padding:7px 14px; border-radius:20px; }
+.speak-toggle { background:#fff; color:#5a6b8c; border:1px solid #d7e0f4; font-size:11px; font-weight:700; padding:7px 10px; border-radius:20px; }
+.speak-toggle.on { background:#e8f1ff; color:#2451c4; border-color:#9db7ff; }
+.voice-status { position:fixed; left:50%; bottom:calc(max(12px,env(safe-area-inset-bottom)) + 6px); transform:translateX(-50%); background:rgba(31,42,68,.88); color:#fff; padding:7px 12px; border-radius:999px; font-size:11px; opacity:0; pointer-events:none; transition:opacity .2s; z-index:30; }
+.voice-status.show { opacity:1; }
 
 /* 数字键盘块：答案显示框 + 键盘 */
 #arith-block { flex-shrink:0; display:flex; flex-direction:column; }
@@ -220,47 +215,53 @@ body.kg-mode .choice-opt { border-radius:20px; }
     <h1 class="home-title">口算闯关营</h1>
     <p class="home-sub">每天练一点，数学更厉害！</p>
     <div class="streak-display" id="streak-display"></div>
+    <div class="home-feature-list">
+      <button class="home-feature-card grade" onclick="goToCategory('grade')">
+        <div class="feature-kicker">LEARNING PATH</div>
+        <div class="feature-title">📚 年级闯关</div>
+        <div class="feature-desc">从小班到三年级，按年龄与教材体系循序闯关，选择年级后再进入关卡地图。</div>
+        <div class="feature-icon">🎓</div>
+        <div class="feature-arrow">›</div>
+      </button>
+      <button class="home-feature-card tower" onclick="goToCategory('tower')">
+        <div class="feature-kicker">SPECIAL CHALLENGE</div>
+        <div class="feature-title">🗼 算数塔</div>
+        <div class="feature-desc">专项口算进阶挑战，5个阶段逐层突破，专注训练计算速度与稳定性。</div>
+        <div class="feature-icon">🏆</div>
+        <div class="feature-arrow">›</div>
+      </button>
+    </div>
     <div class="home-nav-row">
       <button class="home-nav-btn" onclick="goToWrongBook()">📕 错题本</button>
       <button class="home-nav-btn" onclick="goToRecords()">📊 学习记录</button>
+      <button class="home-nav-btn achv-nav-btn" onclick="goToAchievements()">🏅 成就</button>
     </div>
-    <div class="home-nav-row">
-      <button class="home-nav-btn achv-nav-btn" onclick="goToAchievements()">🏅 成就与段位</button>
-    </div>
-    <div class="home-feature-grid">
-      <button class="home-feature-card grade" onclick="openCategory('grade')">
-        <span class="feature-orb"></span><span class="feature-orb small"></span>
-        <span class="feature-kicker">MAIN COURSE · 主线学习</span>
-        <span class="feature-title">年级闯关</span>
-        <span class="feature-desc">小班 · 中班 · 大班 · 一～三年级</span>
-        <span class="feature-arrow">进入选择 →</span><span class="feature-icon">📚</span>
-      </button>
-      <button class="home-feature-card tower" onclick="openCategory('tower')">
-        <span class="feature-orb"></span><span class="feature-orb small"></span>
-        <span class="feature-kicker">SPECIAL TRAINING · 专项挑战</span>
-        <span class="feature-title">算数塔</span>
-        <span class="feature-desc">5阶专项训练 · 180关持续挑战</span>
-        <span class="feature-arrow">进入算数塔 →</span><span class="feature-icon">🗼</span>
-      </button>
-    </div>
-    <div class="section-divider">今日学习</div>
-    <div class="home-mini-note">先选一个学习入口，再进入对应年级或专项关卡。首页更清爽，内容更集中。</div>
   </div>
 </div>
 
-<!-- 模式选择页：首页只展示两大入口，进入后再选择年级/算数塔 -->
-<div id="screen-selector" class="screen" style="display:none;">
+<!-- 年级闯关选择页 -->
+<div id="screen-grade-select" class="screen" style="display:none;">
   <div class="topbar">
-    <button class="back-btn" id="selector-back-btn" onclick="goSelectorBack()">← 返回</button>
-    <div class="topbar-title" id="selector-title">年级闯关</div>
+    <button class="back-btn" onclick="goHome()">← 返回</button>
+    <div class="topbar-title">📚 年级闯关</div>
     <div style="width:44px;"></div>
   </div>
-  <div class="sub-scroll">
-    <div class="selector-head">
-      <div class="selector-title" id="selector-head-title">选择学习阶段</div>
-      <div class="selector-sub" id="selector-head-sub">从小班到三年级，按年龄与教材阶段选择适合自己的口算闯关。</div>
-    </div>
-    <div class="selector-grid" id="selector-list"></div>
+  <div class="selector-wrap">
+    <div class="selector-intro">选择一个学习阶段开始闯关。已解锁的关卡会自动保留进度，完成前一关即可继续解锁下一关。</div>
+    <div class="selector-grid" id="grade-select-grid"></div>
+  </div>
+</div>
+
+<!-- 算数塔选择页 -->
+<div id="screen-tower-select" class="screen" style="display:none;">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">← 返回</button>
+    <div class="topbar-title">🗼 算数塔</div>
+    <div style="width:44px;"></div>
+  </div>
+  <div class="selector-wrap">
+    <div class="selector-intro">专项口算塔，共5个阶段。每一阶都围绕一个核心计算能力逐步提升。</div>
+    <div class="selector-grid" id="tower-select-grid"></div>
   </div>
 </div>
 
@@ -296,7 +297,11 @@ body.kg-mode .choice-opt { border-radius:20px; }
       <div id="combo-badge-layer"></div>
     </div>
 
-    <div class="voice-row"><button class="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button><button class="voice-toggle-btn" id="voice-toggle-btn" onclick="toggleAutoVoice()">🔊 自动播报已开</button></div>
+    <div class="speak-row">
+      <button class="speak-btn" onclick="manualSpeak()">🔊 再读一遍</button>
+      <button class="speak-toggle on" id="speech-toggle" onclick="toggleAutoSpeak()">🔊 自动播报</button>
+    </div>
+    <div class="voice-status" id="voice-status"></div>
 
     <div id="arith-block">
       <div class="answer-display placeholder" id="answer-display">请输入答案</div>
@@ -615,49 +620,46 @@ function arithLevel(poolFn, count) {
 // ===== 选择题生成（点选/选择题类，幼儿园及部分小学概念题共用） =====
 // option: { label(展示文字/emoji), correct(bool), size(可选，用于大小/高矮对比的字号) }
 function choiceOptionKey(opt) {
-  if (opt.visual) return 'visual:' + JSON.stringify(opt.visual);
-  return 'label:' + String(opt.label ?? '') + '|size:' + String(opt.size ?? '');
+  const visual = opt && opt.visual ? JSON.stringify(opt.visual) : '';
+  const label = opt && opt.label != null ? String(opt.label) : '';
+  const size = opt && opt.size != null ? String(opt.size) : '';
+  return `${visual}|${label}|${size}`;
 }
 function sanitizeChoiceOptions(options) {
-  const input = Array.isArray(options) ? options : [];
+  const source = Array.isArray(options) ? options.filter(Boolean) : [];
+  const out = [];
   const seen = new Set();
-  const unique = [];
-  let correctIndex = -1;
-  input.forEach((opt, index) => {
-    if (!opt) return;
-    const item = { ...opt };
-    const key = choiceOptionKey(item);
+  let correctTaken = false;
+
+  for (const original of source) {
+    const opt = { ...original };
+    const key = choiceOptionKey(opt);
     if (seen.has(key)) {
-      if (item.correct === true && correctIndex === -1) {
-        const existingIndex = unique.findIndex(x => choiceOptionKey(x) === key);
-        if (existingIndex >= 0) correctIndex = existingIndex;
+      // 完全重复：优先保留第一次出现的正确选项
+      if (opt.correct && !correctTaken) {
+        const existing = out.findIndex(x => choiceOptionKey(x) === key);
+        if (existing >= 0) {
+          out[existing] = { ...out[existing], correct: true };
+          correctTaken = true;
+        }
       }
-      return;
+      continue;
     }
     seen.add(key);
-    if (item.correct === true && correctIndex === -1) correctIndex = unique.length;
-    else if (item.correct === true) item.correct = false;
-    unique.push(item);
-  });
-  // 所有选择题必须存在且只存在一个正确答案；若数据漏标，默认第一项为正确项，避免出现“没有正确答案”。
-  if (correctIndex < 0 && unique.length) { unique[0].correct = true; correctIndex = 0; }
-  unique.forEach((opt, i) => { opt.correct = i === correctIndex; });
-  // 数字/文字选项因边界值产生重复时，尽量补充一个不重复的干扰项。
-  if (unique.length >= 2 && unique.length < Math.min(3, input.length)) {
-    const correct = unique[correctIndex] || unique[0];
-    if (!correct.visual && correct.label != null && /^-?\d+(?:\.\d+)?$/.test(String(correct.label))) {
-      const n = Number(correct.label);
-      for (const delta of [1, -1, 2, -2, 3, -3]) {
-        const label = String(n + delta);
-        const candidate = { label, correct: false };
-        if (!seen.has(choiceOptionKey(candidate))) { seen.add(choiceOptionKey(candidate)); unique.push(candidate); break; }
-      }
+    if (opt.correct) {
+      if (correctTaken) opt.correct = false;
+      else correctTaken = true;
     }
+    out.push(opt);
   }
-  return shuffle(unique);
+
+  // 如果题目意外没有正确答案，保留第一个作为正确答案，避免出现“没有正确答案”的题。
+  if (out.length > 0 && !out.some(o => o.correct)) out[0].correct = true;
+
+  return out;
 }
 function makeChoice(promptText, speechText, options) {
-  return { type: 'choice', promptText, speechText, options: sanitizeChoiceOptions(options) };
+  return { type: 'choice', promptText, speechText, options: shuffle(sanitizeChoiceOptions(options)) };
 }
 
 function starsStr(n) { return '⭐'.repeat(n); }
@@ -2145,114 +2147,116 @@ window.KS = { shuffle, pick, randInt, makeArith, genAddPool, genSubPool, genMixP
 })();
 
 
-// ===== 稳定语音播报 V2：移动端同步触发 + 语音列表缓存 + 自动恢复 =====
+// ===== 稳定语音播报引擎 =====
+// 关键原则：不要用 setTimeout 延迟首次 speechSynthesis.speak()。
+// Android/iOS 部分浏览器会把延迟调用视为非用户手势，从而静默拦截。
+// 因此 speak() 必须尽可能在点击事件同步调用。
 (function () {
-  if (!('speechSynthesis' in window)) return;
-  // 不再使用“播放空白音频后 80ms cancel”的解锁方式：部分 Android WebView 会把后续真正的语音一起取消。
-  try { window.speechSynthesis.getVoices(); } catch (e) {}
-  if ('onvoiceschanged' in window.speechSynthesis) {
-    window.speechSynthesis.onvoiceschanged = () => { try { window.speechSynthesis.getVoices(); } catch(e){} };
-  }
-})();
+  class StableSpeech {
+    constructor() {
+      this.queue = [];
+      this.busy = false;
+      this.token = 0;
+      this.voice = null;
+      this.lastText = '';
+      this.loadVoices();
+      if ('speechSynthesis' in window) {
+        try { window.speechSynthesis.addEventListener('voiceschanged', () => this.loadVoices()); } catch (e) {}
+      }
+    }
+    loadVoices() {
+      if (!('speechSynthesis' in window)) return;
+      try {
+        const voices = window.speechSynthesis.getVoices() || [];
+        this.voice = voices.find(v => /^zh(-|_)?CN/i.test(v.lang))
+          || voices.find(v => /^zh(-|_)?TW/i.test(v.lang))
+          || voices.find(v => /^zh/i.test(v.lang))
+          || voices[0] || null;
+      } catch (e) {}
+    }
+    supported() { return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window; }
+    stopAll() {
+      this.token++;
+      this.queue.length = 0;
+      this.busy = false;
+      if (this.supported()) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+        try { window.speechSynthesis.resume(); } catch (e) {}
+      }
+    }
+    speakImmediate(text, opts = {}) {
+      if (!text || !this.supported()) return false;
+      this.stopAll();
+      return this._speakNow(String(text), opts, this.token);
+    }
+    enqueue(text, opts = {}) {
+      if (!text || !this.supported()) return;
+      this.queue.push({ text: String(text), opts, token: this.token });
+      this._next();
+    }
+    _next() {
+      if (this.busy || !this.queue.length) return;
+      const item = this.queue.shift();
+      if (item.token !== this.token) return this._next();
+      this._speakNow(item.text, item.opts, item.token, () => this._next());
+    }
+    _speakNow(text, opts = {}, myToken, done) {
+      if (!this.supported() || myToken !== this.token) return false;
+      let u;
+      try {
+        // 某些 Android Chrome 在页面刚打开时 voices 为空；重新读取一次。
+        this.loadVoices();
+        u = new SpeechSynthesisUtterance(text);
+        u.lang = 'zh-CN';
+        u.rate = Math.max(.75, Math.min(1.25, opts.rate ?? 1));
+        u.pitch = Math.max(.8, Math.min(1.3, opts.pitch ?? 1));
+        u.volume = 1;
+        if (this.voice) u.voice = this.voice;
+      } catch (e) { return false; }
 
-class SpeechQueue {
-  constructor() {
-    this.queue=[];
-    this.speaking=false;
-    this.currentUtteranceId=0;
-    this.retryTimer=null;
-  }
-  stopAll() {
-    this.currentUtteranceId++;
-    if (this.retryTimer) { clearTimeout(this.retryTimer); this.retryTimer=null; }
-    this.queue=[];
-    const wasSpeaking = this.speaking || ('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending));
-    this.speaking=false;
-    if ('speechSynthesis' in window && wasSpeaking) {
-      try { window.speechSynthesis.cancel(); } catch(e){}
-      try { window.speechSynthesis.resume(); } catch(e){}
+      this.busy = true;
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        if (myToken !== this.token) return;
+        this.busy = false;
+        if (typeof opts.onEnd === 'function') { try { opts.onEnd(); } catch (e) {} }
+        if (done) done();
+      };
+      u.onend = finish;
+      u.onerror = () => finish();
+      u.oncancel = finish;
+
+      try {
+        const synth = window.speechSynthesis;
+        // 不等待、不 setTimeout：直接 speak，保留用户手势上下文。
+        synth.resume();
+        synth.speak(u);
+        this.lastText = text;
+        // 极少数 WebView 不回调 end/error，兜底释放队列。
+        setTimeout(() => {
+          if (myToken === this.token && this.busy && !synth.speaking && !synth.pending) finish();
+        }, Math.max(4000, text.length * 320));
+        return true;
+      } catch (e) {
+        finish();
+        return false;
+      }
     }
   }
-  enqueue(text, {rate=1, pitch=1, onEnd=null}={}) {
-    if (!text || !('speechSynthesis' in window)) return;
-    const id=this.currentUtteranceId;
-    this.queue.push({text:String(text),rate,pitch,onEnd,id});
-    // 关键：这里必须同步调用 speak，不能再套 setTimeout，否则 Android/iOS 的用户手势授权可能丢失。
-    this._processNext();
-  }
-  speakImmediate(text, opts={}) {
-    if (!text || !('speechSynthesis' in window)) return;
-    this.stopAll();
-    this.enqueue(text, opts);
-  }
-  _pickVoice() {
-    if (!('speechSynthesis' in window)) return null;
-    let voices=[];
-    try { voices=window.speechSynthesis.getVoices() || []; } catch(e) { voices=[]; }
-    return voices.find(v => /^zh(-|_)CN/i.test(v.lang))
-      || voices.find(v => /^zh(-|_)/i.test(v.lang))
-      || voices.find(v => /Chinese|中文|普通话|Mandarin/i.test(v.name || ''))
-      || voices[0] || null;
-  }
-  _processNext() {
-    if (this.speaking) return;
-    const item=this.queue.shift();
-    if (!item) return;
-    if (item.id!==this.currentUtteranceId) { this._processNext(); return; }
-    this.speaking=true;
-    const myId=item.id;
-    let finished=false;
-    let started=false;
-    let retryCount=0;
-    const finish=()=>{
-      if (finished || myId!==this.currentUtteranceId) return;
-      finished=true;
-      this.speaking=false;
-      if (this.retryTimer) { clearTimeout(this.retryTimer); this.retryTimer=null; }
-      try { if(item.onEnd) item.onEnd(); } catch(e){}
-      this._processNext();
-    };
-    const speak=()=>{
-      if (finished || myId!==this.currentUtteranceId) return;
-      let utter;
-      try {
-        utter=new SpeechSynthesisUtterance(item.text);
-        utter.lang='zh-CN';
-        utter.rate=Math.max(.75,Math.min(1.35,item.rate));
-        utter.pitch=Math.max(.7,Math.min(1.5,item.pitch));
-        utter.volume=1;
-        const voice=this._pickVoice();
-        if (voice) utter.voice=voice;
-        utter.onstart=()=>{ started=true; };
-        utter.onend=finish;
-        utter.onerror=(e)=>{
-          // Android 某些内置 TTS 首次会报 interrupted/canceled；只对首次异常做一次同步恢复重试。
-          if (!finished && myId===this.currentUtteranceId && retryCount < 1) {
-            retryCount++;
-            try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(err){}
-            this.retryTimer=setTimeout(()=>{ this.retryTimer=null; speak(); },120);
-          } else finish();
-        };
-        // 不在这里 cancel：cancel→speak 的连续调用是部分移动端“有时有声音、有时没声音”的主要诱因。
-        try { window.speechSynthesis.resume(); } catch(e){}
-        window.speechSynthesis.speak(utter);
-      } catch(e) { finish(); return; }
+  window.speechQueue = new StableSpeech();
 
-      // 如果浏览器接受了 speak 但 1.2 秒仍没有 onstart，再恢复一次。
-      this.retryTimer=setTimeout(()=>{
-        this.retryTimer=null;
-        if (!started && !finished && myId===this.currentUtteranceId) {
-          retryCount++;
-          try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){}
-          setTimeout(()=>{ if(myId===this.currentUtteranceId && !finished) speak(); },100);
-        }
-      },1200);
-    };
-    // 首次进入答题页时 renderQuestion 本身来自按钮点击；这里直接同步 speak，保留浏览器用户激活上下文。
-    speak();
+  // 首次真实点击只负责 resume，不再播放“空白语音后立即 cancel”，避免把浏览器语音引擎取消掉。
+  function resumeSpeechOnGesture() {
+    if (!('speechSynthesis' in window)) return;
+    try { window.speechSynthesis.resume(); } catch (e) {}
+    document.removeEventListener('pointerdown', resumeSpeechOnGesture, true);
+    document.removeEventListener('touchstart', resumeSpeechOnGesture, true);
   }
-}
-window.speechQueue=new SpeechQueue();
+  document.addEventListener('pointerdown', resumeSpeechOnGesture, { capture: true, passive: true });
+  document.addEventListener('touchstart', resumeSpeechOnGesture, { capture: true, passive: true });
+})();
 
 const ENCOURAGE_WORDS = ['太厉害了', '游刃有余', '无人能挡', '横扫千军', '神机妙算', '百战百胜'];
 function randomEncourage() { return ENCOURAGE_WORDS[Math.floor(Math.random() * ENCOURAGE_WORDS.length)]; }
@@ -2494,87 +2498,36 @@ function goHome() {
   renderStageList();
   showScreen('screen-home');
 }
+function renderStageCard(st) {
+  const div = document.createElement('button');
+  div.className = 'stage-card' + (st.comingSoon ? ' soon' : '') + (st.mode === 'kg' ? ' mode-kg' : ' mode-elem') + (st.id.startsWith('tower') ? ' mode-tower' : '');
+  const count = st.comingSoon ? st.plannedCount : st.levels.length;
+  const sp = st.comingSoon ? null : getStageProgress(st.id);
+  const progressText = sp ? `已通关 ${sp.completed.length}/${count}` : '';
+  div.innerHTML = `<div class="stage-icon">${st.icon}</div>
+    <div class="stage-name">${st.name}</div>
+    <div class="stage-sub">${st.sub} · ${count}关${st.comingSoon ? '（敬请期待）' : ''}</div>
+    <div class="stage-progress-mini">${progressText}</div>`;
+  if (!st.comingSoon) div.onclick = () => goToMap(st.id);
+  else div.disabled = true;
+  return div;
+}
 function renderStageList() {
-  // 兼容旧调用：现在首页只保留两大入口，不再把全部学段直接铺开。
-  const wrap = document.getElementById('stage-list');
-  if (wrap) wrap.innerHTML = '';
+  // 首页只展示两个一级入口，不再把全部年级和算数塔平铺出来。
 }
-
-let selectorStack = [];
-const GRADE_GROUPS = [
-  { id:'xiaoban', name:'小班', sub:'3-4岁 · 启蒙', icon:'🌱', stageIds:['xiaoban'] },
-  { id:'zhongban', name:'中班', sub:'4-5岁 · 数字与规律', icon:'🌼', stageIds:['zhongban'] },
-  { id:'daban', name:'大班', sub:'5-6岁 · 10/20以内基础', icon:'🌟', stageIds:['daban'] },
-  { id:'y1', name:'一年级', sub:'6-7岁 · 上册 + 下册', icon:'📘', stageIds:['y1s1','y1s2'] },
-  { id:'y2', name:'二年级', sub:'7-8岁 · 上册 + 下册', icon:'📙', stageIds:['y2s1','y2s2'] },
-  { id:'y3', name:'三年级', sub:'8-9岁 · 上册 + 下册', icon:'📔', stageIds:['y3s1','y3s2'] },
-];
-function openCategory(type) {
+function renderCategoryGrid(type) {
+  const stages = type === 'grade'
+    ? STAGES.filter(s => !s.id.startsWith('tower'))
+    : STAGES.filter(s => s.id.startsWith('tower'));
+  const grid = document.getElementById(type === 'grade' ? 'grade-select-grid' : 'tower-select-grid');
+  grid.innerHTML = '';
+  stages.forEach(st => grid.appendChild(renderStageCard(st)));
+}
+function goToCategory(type) {
   window.speechQueue.stopAll();
-  selectorStack = [{ type:'category' }];
-  renderSelector(type);
-  showScreen('screen-selector');
+  renderCategoryGrid(type);
+  showScreen(type === 'grade' ? 'screen-grade-select' : 'screen-tower-select');
 }
-function goSelectorBack() {
-  window.speechQueue.stopAll();
-  if (selectorStack.length > 1) {
-    selectorStack.pop();
-    const state = selectorStack[selectorStack.length - 1];
-    renderSelector(state.type, state.groupId);
-  } else {
-    selectorStack = [];
-    goHome();
-  }
-}
-function openGradeGroup(groupId) {
-  const group = GRADE_GROUPS.find(g => g.id === groupId);
-  if (!group) return;
-  selectorStack.push({ type:'gradeGroup', groupId });
-  renderSelector('gradeGroup', groupId);
-}
-function renderSelector(type, groupId) {
-  const list = document.getElementById('selector-list');
-  const title = document.getElementById('selector-title');
-  const headTitle = document.getElementById('selector-head-title');
-  const headSub = document.getElementById('selector-head-sub');
-  list.innerHTML = '';
-  if (type === 'grade') {
-    title.textContent = '年级闯关';
-    headTitle.textContent = '选择学习阶段';
-    headSub.textContent = '从小班到三年级，先选择年级，再进入对应教材关卡。';
-    GRADE_GROUPS.forEach(g => {
-      const card = document.createElement('button'); card.className='selector-card';
-      const counts = g.stageIds.map(id => { const st=getStage(id); return st ? st.levels.length : 0; });
-      const total = counts.reduce((a,b)=>a+b,0);
-      card.innerHTML = `<div class="sel-icon">${g.icon}</div><div class="sel-name">${g.name}</div><div class="sel-sub">${g.sub}<br>共 ${total} 关</div><div class="sel-arrow">›</div>`;
-      card.onclick = () => g.stageIds.length === 1 ? goToMap(g.stageIds[0]) : openGradeGroup(g.id);
-      list.appendChild(card);
-    });
-  } else if (type === 'gradeGroup') {
-    const g = GRADE_GROUPS.find(x => x.id === groupId);
-    title.textContent = g ? g.name : '年级';
-    headTitle.textContent = g ? `${g.name} · 选择教材阶段` : '选择教材阶段';
-    headSub.textContent = '上册与下册独立记录进度，进入后可继续自己的关卡。';
-    (g ? g.stageIds : []).forEach(id => {
-      const st=getStage(id); if(!st) return;
-      const card=document.createElement('button'); card.className='selector-card';
-      const sp=getStageProgress(id);
-      card.innerHTML=`<div class="sel-icon">${st.icon}</div><div class="sel-name">${st.name}</div><div class="sel-sub">${st.sub}<br>已通关 ${sp.completed.length}/${st.levels.length}</div><div class="sel-arrow">›</div>`;
-      card.onclick=()=>goToMap(id); list.appendChild(card);
-    });
-  } else if (type === 'tower') {
-    title.textContent='算数塔';
-    headTitle.textContent='选择挑战阶数';
-    headSub.textContent='专项口算训练，共5阶180关。每一阶独立记录闯关进度。';
-    TOWER_STAGES.forEach(st=>{
-      const card=document.createElement('button'); card.className='selector-card tower';
-      const sp=getStageProgress(st.id);
-      card.innerHTML=`<div class="sel-icon">🗼</div><div class="sel-name">${st.name.replace('算数塔·','第')}阶</div><div class="sel-sub">${st.sub}<br>已通关 ${sp.completed.length}/${st.levels.length}</div><div class="sel-arrow">›</div>`;
-      card.onclick=()=>goToMap(st.id); list.appendChild(card);
-    });
-  }
-}
-
 
 // ===== 地图页 =====
 let currentStageId = null;
@@ -2644,7 +2597,7 @@ function goToCurrentMap() { goToMap(currentStageId); }
 function startDailyChallenge(stageId) {
   window.speechQueue.stopAll();
   const st = getStage(stageId);
-  const questions = dedupeQuestions(buildDailyQuestions(stageId));
+  const questions = buildDailyQuestions(stageId);
   if (!questions || questions.length === 0) {
     alert('今日题目生成遇到问题，请重新点击试试');
     goToMap(stageId);
@@ -2681,7 +2634,7 @@ function startLevel(stageId, levelNum) {
   window.speechQueue.stopAll();
   const st = getStage(stageId);
   const lvDef = st.levels[levelNum - 1];
-  const questions = dedupeQuestions(lvDef.content());
+  const questions = lvDef.content();
   if (!questions || questions.length === 0) {
     alert('这一关的题目生成遇到问题，已自动返回地图，请重新点击试试');
     goToMap(stageId);
@@ -2705,6 +2658,12 @@ function startLevel(stageId, levelNum) {
   document.getElementById('back-btn-answer').onclick = mode === 'elem' ? confirmExit : () => { clearInterval(timerHandle); goToCurrentMap(); };
   showScreen('screen-answer');
   if (mode === 'elem') startTimer(); else document.getElementById('timer').textContent = '';
+  // startLevel 通常由用户点击触发：直接在这个同步调用栈中播报第一题。
+  // 这是移动端最可靠的 speechSynthesis 触发方式。
+  if (isAutoSpeakEnabled() && questions[0] && questions[0].speechText) {
+    rt._speechPrimed = true;
+    window.speechQueue.speakImmediate(questions[0].speechText, { rate: 1, pitch: 1 });
+  }
   renderQuestion();
 }
 
@@ -2729,25 +2688,13 @@ function currentQuestion() {
   return rt.wrongQueue[rt.retryIndex];
 }
 
-function isAutoVoiceEnabled() { return localStorage.getItem('ks_auto_voice') !== '0'; }
-function speakQuestionAuto(q) {
-  if (!q || !q.speechText || !isAutoVoiceEnabled()) return;
-  // 必须同步触发：不要 setTimeout，否则移动端语音授权可能失效。
-  window.speechQueue.speakImmediate(q.speechText, {rate:1, pitch:1});
-}
-function toggleAutoVoice() {
-  const enabled=isAutoVoiceEnabled();
-  localStorage.setItem('ks_auto_voice', enabled ? '0' : '1');
-  const btn=document.getElementById('voice-toggle-btn');
-  if(btn) btn.textContent=enabled ? '🔇 自动播报已关' : '🔊 自动播报已开';
-  if(enabled) window.speechQueue.stopAll();
-}
-
 function renderQuestion() {
   const q = currentQuestion();
-  if (q && q.type === 'choice') q.options = sanitizeChoiceOptions(q.options);
-  const voiceBtn = document.getElementById('voice-toggle-btn');
-  if (voiceBtn) voiceBtn.textContent = isAutoVoiceEnabled() ? '🔊 自动播报已开' : '🔇 自动播报已关';
+  if (!q) return;
+  // 第一题可能已经在用户点击的同步调用栈中播报，不能立即 cancel。
+  const speechPrimed = !!rt._speechPrimed;
+  if (!speechPrimed) window.speechQueue.stopAll();
+  rt._speechPrimed = false;
   rt.currentInput = ''; rt.selectedChoice = null;
   rt.questionStartTime = Date.now();
 
@@ -2775,6 +2722,7 @@ function renderQuestion() {
     document.getElementById('answer-display').classList.remove('placeholder');
     document.getElementById('answer-display').textContent = '';
     setPlaceholder();
+    if (!speechPrimed && isAutoSpeakEnabled()) speakQuestion(q);
   } else {
     if (q.promptVisual) {
       card.innerHTML = window.KS.renderVisual(q.promptVisual);
@@ -2787,7 +2735,6 @@ function renderQuestion() {
     q.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'choice-opt' + (opt.visual ? ' has-visual' : '');
-      btn.dataset.correct = opt.correct ? '1' : '0';
       if (opt.visual) {
         btn.innerHTML = window.KS.renderVisual(opt.visual);
       } else {
@@ -2797,9 +2744,8 @@ function renderQuestion() {
       btn.onclick = () => submitChoice(opt, btn);
       choiceBlock.appendChild(btn);
     });
+    if (!speechPrimed && isAutoSpeakEnabled()) speakQuestion(q);
   }
-  // 统一在 DOM 已渲染后立即播报，避免分支间行为不一致。
-  speakQuestionAuto(q);
 }
 
 function setPlaceholder() {
@@ -2808,9 +2754,41 @@ function setPlaceholder() {
   else { disp.textContent = rt.currentInput; disp.classList.remove('placeholder'); }
 }
 
+function isAutoSpeakEnabled() {
+  return localStorage.getItem('ks_auto_speak') !== '0';
+}
+function updateSpeechToggleUI() {
+  const btn = document.getElementById('speech-toggle');
+  if (!btn) return;
+  const on = isAutoSpeakEnabled();
+  btn.classList.toggle('on', on);
+  btn.textContent = on ? '🔊 自动播报' : '🔇 自动播报';
+}
+function toggleAutoSpeak() {
+  const next = !isAutoSpeakEnabled();
+  localStorage.setItem('ks_auto_speak', next ? '1' : '0');
+  if (!next) window.speechQueue.stopAll();
+  updateSpeechToggleUI();
+}
+function showVoiceStatus(message) {
+  const el = document.getElementById('voice-status');
+  if (!el) return;
+  el.textContent = message;
+  el.classList.add('show');
+  clearTimeout(showVoiceStatus._timer);
+  showVoiceStatus._timer = setTimeout(() => el.classList.remove('show'), 1400);
+}
+function speakQuestion(q) {
+  if (!q || !q.speechText) return false;
+  return window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+}
 function manualSpeak() {
   const q = currentQuestion(); if (!q) return;
-  window.speechQueue.speakImmediate(q.speechText, { rate: 1, pitch: 1 });
+  if (!('speechSynthesis' in window)) {
+    showVoiceStatus('当前浏览器不支持语音播报');
+    return;
+  }
+  if (!speakQuestion(q)) showVoiceStatus('语音启动失败，请点“再读一遍”重试');
 }
 
 // ---- 数字键盘 ----
@@ -2838,11 +2816,14 @@ function keypadConfirm() {
 // ---- 选择题 ----
 function submitChoice(opt, btnEl) {
   document.querySelectorAll('.choice-opt').forEach(b => b.disabled = true);
-  const isCorrect = !!opt.correct;
+  const q = currentQuestion();
+  const correctIndex = q && Array.isArray(q.options) ? q.options.findIndex(o => o && o.correct) : -1;
+  const clickedIndex = q ? q.options.indexOf(opt) : -1;
+  const isCorrect = clickedIndex >= 0 && clickedIndex === correctIndex;
   btnEl.classList.add(isCorrect ? 'opt-correct' : 'opt-wrong');
-  if (!isCorrect) {
-    const correctBtn = Array.from(document.querySelectorAll('.choice-opt')).find(b => b.dataset.correct === '1');
-    if (correctBtn) correctBtn.classList.add('opt-correct');
+  if (!isCorrect && correctIndex >= 0) {
+    const buttons = Array.from(document.querySelectorAll('.choice-opt'));
+    if (buttons[correctIndex]) buttons[correctIndex].classList.add('opt-correct');
   }
   judgeAndProceed(isCorrect);
 }
@@ -3274,6 +3255,7 @@ function importBackupFile(inputEl) {
   inputEl.value = '';
 }
 
+updateSpeechToggleUI();
 goHome();
 
 // PWA离线支持：注册service worker，失败不影响正常使用（比如本地直接打开index.html文件时）
