@@ -2145,77 +2145,111 @@ window.KS = { shuffle, pick, randInt, makeArith, genAddPool, genSubPool, genMixP
 })();
 
 
-// ===== 稳定语音播报：移动端解锁 + 语音列表加载 + 失败重试 =====
+// ===== 稳定语音播报 V2：移动端同步触发 + 语音列表缓存 + 自动恢复 =====
 (function () {
-  let unlocked = false;
-  function unlockSpeech() {
-    if (unlocked || !('speechSynthesis' in window)) return;
-    unlocked = true;
-    try {
-      const u = new SpeechSynthesisUtterance(' ');
-      u.lang = 'zh-CN'; u.volume = 0.01; u.rate = 1;
-      window.speechSynthesis.speak(u);
-      setTimeout(() => { try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){} }, 80);
-    } catch (e) {}
-  }
-  document.addEventListener('pointerdown', unlockSpeech, { once:true, capture:true, passive:true });
-  document.addEventListener('touchend', unlockSpeech, { once:true, capture:true, passive:true });
-  if ('speechSynthesis' in window) {
-    try { window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices(); } catch(e) {}
+  if (!('speechSynthesis' in window)) return;
+  // 不再使用“播放空白音频后 80ms cancel”的解锁方式：部分 Android WebView 会把后续真正的语音一起取消。
+  try { window.speechSynthesis.getVoices(); } catch (e) {}
+  if ('onvoiceschanged' in window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = () => { try { window.speechSynthesis.getVoices(); } catch(e){} };
   }
 })();
 
 class SpeechQueue {
-  constructor() { this.queue=[]; this.speaking=false; this.currentUtteranceId=0; this.retryToken=0; }
+  constructor() {
+    this.queue=[];
+    this.speaking=false;
+    this.currentUtteranceId=0;
+    this.retryTimer=null;
+  }
   stopAll() {
-    this.retryToken++;
-    if ('speechSynthesis' in window) { try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){} }
-    this.queue=[]; this.speaking=false; this.currentUtteranceId++;
+    this.currentUtteranceId++;
+    if (this.retryTimer) { clearTimeout(this.retryTimer); this.retryTimer=null; }
+    this.queue=[];
+    const wasSpeaking = this.speaking || ('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending));
+    this.speaking=false;
+    if ('speechSynthesis' in window && wasSpeaking) {
+      try { window.speechSynthesis.cancel(); } catch(e){}
+      try { window.speechSynthesis.resume(); } catch(e){}
+    }
   }
   enqueue(text, {rate=1, pitch=1, onEnd=null}={}) {
-    if (!text) return;
-    const id=this.currentUtteranceId; this.queue.push({text:String(text),rate,pitch,onEnd,id}); this._processNext();
+    if (!text || !('speechSynthesis' in window)) return;
+    const id=this.currentUtteranceId;
+    this.queue.push({text:String(text),rate,pitch,onEnd,id});
+    // 关键：这里必须同步调用 speak，不能再套 setTimeout，否则 Android/iOS 的用户手势授权可能丢失。
+    this._processNext();
   }
-  speakImmediate(text, opts={}) { this.stopAll(); this.enqueue(text, opts); }
+  speakImmediate(text, opts={}) {
+    if (!text || !('speechSynthesis' in window)) return;
+    this.stopAll();
+    this.enqueue(text, opts);
+  }
   _pickVoice() {
     if (!('speechSynthesis' in window)) return null;
-    const voices=window.speechSynthesis.getVoices();
-    return voices.find(v => /^zh(-|_)CN/i.test(v.lang)) || voices.find(v => /^zh/i.test(v.lang)) || voices[0] || null;
+    let voices=[];
+    try { voices=window.speechSynthesis.getVoices() || []; } catch(e) { voices=[]; }
+    return voices.find(v => /^zh(-|_)CN/i.test(v.lang))
+      || voices.find(v => /^zh(-|_)/i.test(v.lang))
+      || voices.find(v => /Chinese|中文|普通话|Mandarin/i.test(v.name || ''))
+      || voices[0] || null;
   }
   _processNext() {
     if (this.speaking) return;
-    const item=this.queue.shift(); if(!item) return;
-    if(item.id!==this.currentUtteranceId) { this._processNext(); return; }
-    this.speaking=true; const myId=item.id; let started=false; let finished=false;
-    if(!('speechSynthesis' in window)) { this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext(); return; }
-    let utter;
-    try {
-      utter=new SpeechSynthesisUtterance(item.text);
-      utter.lang='zh-CN'; utter.rate=Math.max(.75,Math.min(1.35,item.rate)); utter.pitch=Math.max(.7,Math.min(1.5,item.pitch)); utter.volume=1;
-      const voice=this._pickVoice(); if(voice) utter.voice=voice;
-    } catch(e) { this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext(); return; }
+    const item=this.queue.shift();
+    if (!item) return;
+    if (item.id!==this.currentUtteranceId) { this._processNext(); return; }
+    this.speaking=true;
+    const myId=item.id;
+    let finished=false;
+    let started=false;
+    let retryCount=0;
     const finish=()=>{
-      if(finished || myId!==this.currentUtteranceId) return;
-      finished=true; this.speaking=false; if(item.onEnd)item.onEnd(); this._processNext();
+      if (finished || myId!==this.currentUtteranceId) return;
+      finished=true;
+      this.speaking=false;
+      if (this.retryTimer) { clearTimeout(this.retryTimer); this.retryTimer=null; }
+      try { if(item.onEnd) item.onEnd(); } catch(e){}
+      this._processNext();
     };
-    utter.onstart=()=>{started=true;}; utter.onend=finish; utter.onerror=()=>finish();
-    try {
-      window.speechSynthesis.cancel(); window.speechSynthesis.resume();
-      // 给移动端浏览器一个极短的调度间隙，减少 cancel→speak 连续调用被吞掉的概率。
-      setTimeout(()=>{
-        if(myId!==this.currentUtteranceId || finished) return;
-        try { window.speechSynthesis.resume(); window.speechSynthesis.speak(utter); } catch(e){ finish(); return; }
-        setTimeout(()=>{
-          if(!started && !finished && myId===this.currentUtteranceId) {
-            try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){}
-            setTimeout(()=>{
-              if(myId!==this.currentUtteranceId || finished) return;
-              try { window.speechSynthesis.speak(utter); } catch(e){ finish(); }
-            },80);
-          }
-        },900);
-      },30);
-    } catch(e) { finish(); }
+    const speak=()=>{
+      if (finished || myId!==this.currentUtteranceId) return;
+      let utter;
+      try {
+        utter=new SpeechSynthesisUtterance(item.text);
+        utter.lang='zh-CN';
+        utter.rate=Math.max(.75,Math.min(1.35,item.rate));
+        utter.pitch=Math.max(.7,Math.min(1.5,item.pitch));
+        utter.volume=1;
+        const voice=this._pickVoice();
+        if (voice) utter.voice=voice;
+        utter.onstart=()=>{ started=true; };
+        utter.onend=finish;
+        utter.onerror=(e)=>{
+          // Android 某些内置 TTS 首次会报 interrupted/canceled；只对首次异常做一次同步恢复重试。
+          if (!finished && myId===this.currentUtteranceId && retryCount < 1) {
+            retryCount++;
+            try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(err){}
+            this.retryTimer=setTimeout(()=>{ this.retryTimer=null; speak(); },120);
+          } else finish();
+        };
+        // 不在这里 cancel：cancel→speak 的连续调用是部分移动端“有时有声音、有时没声音”的主要诱因。
+        try { window.speechSynthesis.resume(); } catch(e){}
+        window.speechSynthesis.speak(utter);
+      } catch(e) { finish(); return; }
+
+      // 如果浏览器接受了 speak 但 1.2 秒仍没有 onstart，再恢复一次。
+      this.retryTimer=setTimeout(()=>{
+        this.retryTimer=null;
+        if (!started && !finished && myId===this.currentUtteranceId) {
+          retryCount++;
+          try { window.speechSynthesis.cancel(); window.speechSynthesis.resume(); } catch(e){}
+          setTimeout(()=>{ if(myId===this.currentUtteranceId && !finished) speak(); },100);
+        }
+      },1200);
+    };
+    // 首次进入答题页时 renderQuestion 本身来自按钮点击；这里直接同步 speak，保留浏览器用户激活上下文。
+    speak();
   }
 }
 window.speechQueue=new SpeechQueue();
@@ -2698,9 +2732,8 @@ function currentQuestion() {
 function isAutoVoiceEnabled() { return localStorage.getItem('ks_auto_voice') !== '0'; }
 function speakQuestionAuto(q) {
   if (!q || !q.speechText || !isAutoVoiceEnabled()) return;
-  // 每次新题先彻底终止上一题语音，再在当前渲染完成后播放，避免“上一题还在播/这一题没声音”。
-  window.speechQueue.stopAll();
-  setTimeout(() => { if (rt && currentQuestion() === q) window.speechQueue.enqueue(q.speechText, {rate:1, pitch:1}); }, 45);
+  // 必须同步触发：不要 setTimeout，否则移动端语音授权可能失效。
+  window.speechQueue.speakImmediate(q.speechText, {rate:1, pitch:1});
 }
 function toggleAutoVoice() {
   const enabled=isAutoVoiceEnabled();
@@ -2742,7 +2775,6 @@ function renderQuestion() {
     document.getElementById('answer-display').classList.remove('placeholder');
     document.getElementById('answer-display').textContent = '';
     setPlaceholder();
-    speakQuestionAuto(q);
   } else {
     if (q.promptVisual) {
       card.innerHTML = window.KS.renderVisual(q.promptVisual);
@@ -2765,8 +2797,9 @@ function renderQuestion() {
       btn.onclick = () => submitChoice(opt, btn);
       choiceBlock.appendChild(btn);
     });
-    speakQuestionAuto(q);
   }
+  // 统一在 DOM 已渲染后立即播报，避免分支间行为不一致。
+  speakQuestionAuto(q);
 }
 
 function setPlaceholder() {

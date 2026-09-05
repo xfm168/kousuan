@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kousuan-v2';
+const CACHE_NAME = 'kousuan-v3';
 const urlsToCache = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {
